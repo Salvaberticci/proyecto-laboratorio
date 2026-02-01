@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -11,46 +14,56 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
+
         .container {
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             padding: 30px;
             margin-top: 30px;
             margin-bottom: 30px;
         }
+
         .btn-primary {
             background: linear-gradient(45deg, #667eea, #764ba2);
             border: none;
             border-radius: 25px;
             padding: 10px 25px;
         }
+
         .btn-primary:hover {
             background: linear-gradient(45deg, #5a6fd8, #6a4190);
         }
+
         .table {
             border-radius: 10px;
             overflow: hidden;
         }
+
         .table thead {
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
         }
+
         .btn-sm {
             border-radius: 20px;
         }
+
         .card {
             border: none;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h1 class="mb-0"><i class="fas fa-flask text-primary me-2"></i><%= title %></h1>
+                <h1 class="mb-0"><i class="fas fa-flask text-primary me-2"></i>
+                    <%= title %>
+                </h1>
                 <p class="text-muted mb-0">Gestión completa de experimentos del laboratorio</p>
             </div>
             <a href="/examenes/crear" class="btn btn-primary">
@@ -59,78 +72,91 @@
         </div>
 
         <!-- Mensajes de alerta -->
-        <% if (typeof error !== 'undefined' && error) { %>
+        <% if (typeof error !=='undefined' && error) { %>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <i class="fas fa-exclamation-triangle me-2"></i>
                 <%= error %>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-        <% } %>
+            <% } %>
 
-        <% if (typeof success !== 'undefined' && success) { %>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i>
-                <%= success %>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        <% } %>
+                <% if (typeof success !=='undefined' && success) { %>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <%= success %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <% } %>
 
-        <div class="card">
-            <div class="card-body">
-                <% if (experimentos && experimentos.length > 0) { %>
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th><i class="fas fa-hashtag me-1"></i>ID</th>
-                                    <th><i class="fas fa-flask me-1"></i>Nombre</th>
-                                    <th><i class="fas fa-calendar me-1"></i>Fecha Creación</th>
-                                    <th><i class="fas fa-clock me-1"></i>Duración Est. (min)</th>
-                                    <th><i class="fas fa-cogs me-1"></i>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% experimentos.forEach(function(experimento) { %>
-                                    <tr>
-                                        <td><%= experimento.id_experimento %></td>
-                                        <td>
-                                            <strong><%= experimento.nombre %></strong>
-                                        </td>
-                                        <td><%= experimento.fecha_creacion %></td>
-                                        <td><%= experimento.duracion_estimada %> min</td>
-                                        <td>
-                                            <a href="/examenes/<%= experimento.id_experimento %>/editar" class="btn btn-warning btn-sm me-1">
-                                                <i class="fas fa-edit"></i> Editar
+                        <div class="card">
+                            <div class="card-body">
+                                <% if (experimentos && experimentos.length> 0) { %>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th><i class="fas fa-hashtag me-1"></i>ID</th>
+                                                    <th><i class="fas fa-flask me-1"></i>Nombre</th>
+                                                    <th><i class="fas fa-calendar me-1"></i>Fecha Creación</th>
+                                                    <th><i class="fas fa-clock me-1"></i>Duración Est. (min)</th>
+                                                    <th><i class="fas fa-cogs me-1"></i>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% experimentos.forEach(function(experimento) { %>
+                                                    <tr>
+                                                        <td>
+                                                            <%= experimento.id %>
+                                                        </td>
+                                                        <td>
+                                                            <strong>
+                                                                <%= experimento.nombre %>
+                                                            </strong>
+                                                        </td>
+                                                        <td>
+                                                            <%= experimento.fecha_creacion %>
+                                                        </td>
+                                                        <td>
+                                                            <%= experimento.duracion_estimada %> min
+                                                        </td>
+                                                        <td>
+                                                            <a href="/examenes/<%= experimento.id %>/editar"
+                                                                class="btn btn-warning btn-sm me-1">
+                                                                <i class="fas fa-edit"></i> Editar
+                                                            </a>
+                                                            <form method="POST"
+                                                                action="/examenes/<%= experimento.id %>?_method=DELETE"
+                                                                style="display: inline;">
+                                                                <button type="button" class="btn btn-danger btn-sm"
+                                                                    onclick="confirmarEliminar('<%= experimento.nombre %>', this.form)">
+                                                                    <i class="fas fa-trash"></i> Eliminar
+                                                                </button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                    <% }); %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <% } else { %>
+                                        <div class="text-center py-5">
+                                            <i class="fas fa-flask fa-4x text-muted mb-3"></i>
+                                            <h4 class="text-muted">No hay experimentos registrados</h4>
+                                            <p class="text-muted">Comienza agregando tu primer experimento al sistema.
+                                            </p>
+                                            <a href="/examenes/crear" class="btn btn-primary">
+                                                <i class="fas fa-plus me-2"></i>Agregar Primer Experimento
                                             </a>
-                                            <form method="POST" action="/examenes/<%= experimento.id_experimento %>?_method=DELETE" style="display: inline;">
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmarEliminar('<%= experimento.nombre %>', this.form)">
-                                                    <i class="fas fa-trash"></i> Eliminar
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                <% }); %>
-                            </tbody>
-                        </table>
-                    </div>
-                <% } else { %>
-                    <div class="text-center py-5">
-                        <i class="fas fa-flask fa-4x text-muted mb-3"></i>
-                        <h4 class="text-muted">No hay experimentos registrados</h4>
-                        <p class="text-muted">Comienza agregando tu primer experimento al sistema.</p>
-                        <a href="/examenes/crear" class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i>Agregar Primer Experimento
-                        </a>
-                    </div>
-                <% } %>
-            </div>
-        </div>
+                                        </div>
+                                        <% } %>
+                            </div>
+                        </div>
 
-        <div class="mt-4">
-            <a href="/" class="btn btn-outline-secondary">
-                <i class="fas fa-home me-2"></i>Volver al Inicio
-            </a>
-        </div>
+                        <div class="mt-4">
+                            <a href="/" class="btn btn-outline-secondary">
+                                <i class="fas fa-home me-2"></i>Volver al Inicio
+                            </a>
+                        </div>
     </div>
 
 
@@ -143,4 +169,5 @@
         }
     </script>
 </body>
+
 </html>

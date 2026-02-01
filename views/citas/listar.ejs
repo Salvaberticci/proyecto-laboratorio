@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -11,46 +14,56 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
+
         .container {
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             padding: 30px;
             margin-top: 30px;
             margin-bottom: 30px;
         }
+
         .btn-primary {
             background: linear-gradient(45deg, #667eea, #764ba2);
             border: none;
             border-radius: 25px;
             padding: 10px 25px;
         }
+
         .btn-primary:hover {
             background: linear-gradient(45deg, #5a6fd8, #6a4190);
         }
+
         .table {
             border-radius: 10px;
             overflow: hidden;
         }
+
         .table thead {
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
         }
+
         .btn-sm {
             border-radius: 20px;
         }
+
         .card {
             border: none;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h1 class="mb-0"><i class="fas fa-calendar-alt text-primary me-2"></i><%= title %></h1>
+                <h1 class="mb-0"><i class="fas fa-calendar-alt text-primary me-2"></i>
+                    <%= title %>
+                </h1>
                 <p class="text-muted mb-0">Gestión de funciones y proyecciones</p>
             </div>
             <a href="/funciones/crear" class="btn btn-primary">
@@ -60,60 +73,66 @@
 
         <div class="card">
             <div class="card-body">
-                <% if (funciones && funciones.length > 0) { %>
+                <% if (pruebas && pruebas.length> 0) { %>
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
                                     <th><i class="fas fa-hashtag me-1"></i>ID</th>
-                                    <th><i class="fas fa-film me-1"></i>Película</th>
-                                    <th><i class="fas fa-building me-1"></i>Sala</th>
+                                    <th><i class="fas fa-flask me-1"></i>Experimento</th>
+                                    <th><i class="fas fa-building me-1"></i>Laboratorio</th>
                                     <th><i class="fas fa-clock me-1"></i>Fecha y Hora</th>
                                     <th><i class="fas fa-cogs me-1"></i>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <% funciones.forEach(function(funcion) { %>
+                                <% pruebas.forEach(function(prueba) { %>
                                     <tr>
-                                        <td><%= funcion.id_funcion %></td>
                                         <td>
-                                            <strong><%= peliculasMap[funcion.id_pelicula] || 'Película no encontrada' %></strong>
+                                            <%= prueba.id %>
                                         </td>
                                         <td>
-                                            <span class="badge bg-info"><%= salasMap[funcion.id_sala] || 'Sala no encontrada' %></span>
+                                            <strong>
+                                                <%= experimentosMap[prueba.id_experimento]
+                                                    || 'Experimento no encontrado' %>
+                                            </strong>
                                         </td>
                                         <td>
-                                            <%= new Date(funcion.fecha_hora).toLocaleString('es-ES', {
-                                                year: 'numeric',
-                                                month: '2-digit',
-                                                day: '2-digit',
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            }) %>
+                                            <span class="badge bg-info">
+                                                <%= laboratoriosMap[prueba.id_laboratorio]
+                                                    || 'Laboratorio no encontrado' %>
+                                            </span>
                                         </td>
                                         <td>
-                                            <a href="/funciones/<%= funcion.id_funcion %>/editar" class="btn btn-warning btn-sm me-1">
+                                            <%= new Date(prueba.fecha_hora_inicio).toLocaleString('es-ES', {
+                                                year: 'numeric' , month: '2-digit' , day: '2-digit' , hour: '2-digit' ,
+                                                minute: '2-digit' }) %>
+                                        </td>
+                                        <td>
+                                            <a href="/citas/<%= prueba.id %>/editar"
+                                                class="btn btn-warning btn-sm me-1">
                                                 <i class="fas fa-edit"></i> Editar
                                             </a>
-                                            <button class="btn btn-danger btn-sm" data-id="<%= funcion.id_funcion %>" data-nombre="<%= peliculasMap[funcion.id_pelicula] || 'Función' %>">
+                                            <button class="btn btn-danger btn-sm" data-id="<%= prueba.id %>"
+                                                data-nombre="Prueba #<%= prueba.id %>">
                                                 <i class="fas fa-trash"></i> Eliminar
                                             </button>
                                         </td>
                                     </tr>
-                                <% }); %>
+                                    <% }); %>
                             </tbody>
                         </table>
                     </div>
-                <% } else { %>
-                    <div class="text-center py-5">
-                        <i class="fas fa-calendar-alt fa-4x text-muted mb-3"></i>
-                        <h4 class="text-muted">No hay funciones programadas</h4>
-                        <p class="text-muted">Comienza programando tu primera función.</p>
-                        <a href="/funciones/crear" class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i>Programar Primera Función
-                        </a>
-                    </div>
-                <% } %>
+                    <% } else { %>
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-alt fa-4x text-muted mb-3"></i>
+                            <h4 class="text-muted">No hay pruebas programadas</h4>
+                            <p class="text-muted">Comienza programando tu primera prueba.</p>
+                            <a href="/citas/crear" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Programar Primera Prueba
+                            </a>
+                        </div>
+                        <% } %>
             </div>
         </div>
 
@@ -151,10 +170,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Agregar event listeners a todos los botones de eliminar
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const eliminarButtons = document.querySelectorAll('.btn-danger[data-id]');
             eliminarButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     const id = this.getAttribute('data-id');
                     const nombre = this.getAttribute('data-nombre');
                     eliminarFuncion(id, nombre);
@@ -170,11 +189,11 @@
             new bootstrap.Modal(document.getElementById('eliminarModal')).show();
         }
 
-        document.getElementById('confirmarEliminar').addEventListener('click', async function() {
+        document.getElementById('confirmarEliminar').addEventListener('click', async function () {
             if (!funcionIdAEliminar) return;
 
             try {
-                const response = await fetch(`/api/funciones/${funcionIdAEliminar}`, {
+                const response = await fetch(`/citas/${funcionIdAEliminar}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
@@ -196,4 +215,5 @@
         });
     </script>
 </body>
+
 </html>

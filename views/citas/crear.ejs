@@ -79,55 +79,57 @@
                     </div>
                     <% } %>
 
-                        <form action="/funciones" method="POST">
+                        <form action="/citas" method="POST">
                             <div class="mb-3">
-                                <label for="id_pelicula" class="form-label">
-                                    <i class="fas fa-film me-1"></i>Película *
+                                <label for="id_experimento" class="form-label">
+                                    <i class="fas fa-flask me-1"></i>Experimento *
                                 </label>
-                                <select class="form-select" id="id_pelicula" name="id_pelicula" required>
-                                    <option value="">Seleccione una película</option>
-                                    <% peliculas.forEach(function(pelicula) { %>
-                                        <option value="<%= pelicula.id_pelicula %>" <%=typeof funcion !=='undefined' &&
-                                            funcion.id_pelicula==pelicula.id_pelicula ? 'selected' : '' %>>
-                                            <%= pelicula.titulo %> (<%= pelicula.anio %>)
+                                <select class="form-select" id="id_experimento" name="id_experimento" required>
+                                    <option value="">Seleccione un experimento</option>
+                                    <% experimentos.forEach(function(experimento) { %>
+                                        <option value="<%= experimento.id %>" <%=typeof prueba !=='undefined' &&
+                                            prueba.id_experimento==experimento.id ? 'selected' : '' %>>
+                                            <%= experimento.nombre %>
                                         </option>
                                         <% }); %>
                                 </select>
-                                <div class="form-text">Seleccione la película que se proyectará</div>
+                                <div class="form-text">Seleccione el experimento a realizar</div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="id_sala" class="form-label">
-                                    <i class="fas fa-building me-1"></i>Sala *
+                                <label for="id_laboratorio" class="form-label">
+                                    <i class="fas fa-building me-1"></i>Laboratorio *
                                 </label>
-                                <select class="form-select" id="id_sala" name="id_sala" required>
-                                    <option value="">Seleccione una sala</option>
-                                    <% salas.forEach(function(sala) { %>
-                                        <option value="<%= sala.id_sala %>" <%=typeof funcion !=='undefined' &&
-                                            funcion.id_sala==sala.id_sala ? 'selected' : '' %>>
-                                            <%= sala.nombre %> (Capacidad: <%= sala.capacidad %>)
+                                <select class="form-select" id="id_laboratorio" name="id_laboratorio" required>
+                                    <option value="">Seleccione un laboratorio</option>
+                                    <% laboratorios.forEach(function(laboratorio) { %>
+                                        <option value="<%= laboratorio.id_laboratorio %>" <%=typeof prueba
+                                            !=='undefined' && prueba.id_laboratorio==laboratorio.id_laboratorio
+                                            ? 'selected' : '' %>>
+                                            <%= laboratorio.nombre %> (<%= laboratorio.ubicacion %>)
                                         </option>
                                         <% }); %>
                                 </select>
-                                <div class="form-text">Seleccione la sala donde se realizará la función</div>
+                                <div class="form-text">Seleccione el laboratorio asignado</div>
                             </div>
 
                             <div class="mb-4">
-                                <label for="fecha_hora" class="form-label">
+                                <label for="fecha_hora_inicio" class="form-label">
                                     <i class="fas fa-clock me-1"></i>Fecha y Hora *
                                 </label>
-                                <input type="datetime-local" class="form-control" id="fecha_hora" name="fecha_hora"
-                                    value="<%= typeof funcion !== 'undefined' && funcion.fecha_hora ? new Date(funcion.fecha_hora).toISOString().slice(0, 16) : '' %>"
+                                <input type="datetime-local" class="form-control" id="fecha_hora_inicio"
+                                    name="fecha_hora_inicio"
+                                    value="<%= typeof prueba !== 'undefined' && prueba.fecha_hora_inicio ? new Date(prueba.fecha_hora_inicio).toISOString().slice(0, 16) : '' %>"
                                     min="<%= new Date().toISOString().slice(0, 16) %>" required>
-                                <div class="form-text">Seleccione la fecha y hora de la función</div>
+                                <div class="form-text">Seleccione la fecha y hora de la prueba</div>
                             </div>
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <a href="/funciones" class="btn btn-outline-secondary me-md-2">
+                                <a href="/citas" class="btn btn-outline-secondary me-md-2">
                                     <i class="fas fa-times me-1"></i>Cancelar
                                 </a>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-calendar-check me-1"></i>Programar Función
+                                    <i class="fas fa-calendar-check me-1"></i>Programar Prueba
                                 </button>
                             </div>
                         </form>

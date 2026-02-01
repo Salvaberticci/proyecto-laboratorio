@@ -73,16 +73,101 @@
 
 ## 📖 Documentación
 
-La API cuenta con los siguientes endpoints principales:
+## 📖 Documentación y Pruebas con Postman
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/insumos` | Listar todos los reactivos |
-| GET | `/api/ordenes` | Listar todas las órdenes |
-| POST | `/api/ordenes` | Crear una nueva orden |
-| GET | `/api/ordenes/rango-fechas` | Filtrar órdenes por fecha |
+### 1. Configuración Inicial
 
-Para más detalles, consulta `docs/API_GUIDE.md`.
+El servidor corre por defecto en el puerto **8888**.
+**Base URL:** `http://localhost:8888`
+
+### 2. Autenticación (Obtener Token)
+
+La mayoría de los endpoints de la API están protegidos y requieren un token JWT.
+
+#### Login (Obtener Token)
+*   **Método:** `POST`
+*   **URL:** `{{base_url}}/auth/login`
+*   **Body (JSON):**
+    ```json
+    {
+      "username": "admin",
+      "password": "password123"
+    }
+    ```
+    *(Nota: Usa las credenciales configuradas en tu `DBService.js`. Por defecto: `admin` / `12345`)*
+
+**Respuesta Exitosa:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR...",
+  "user": { ... }
+}
+```
+
+> **Importante:** Copia el valor del `token` de la respuesta. Lo necesitarás para las siguientes peticiones.
+
+### 3. Configurar Autorización en Postman
+
+Para las peticiones protegidas (rutas `/api/...`):
+1.  Ve a la pestaña **Authorization**.
+2.  Selecciona el tipo **Bearer Token**.
+3.  Pega el token que obtuviste en el paso de Login.
+
+### 4. Endpoints de Experimentos (Exámenes)
+
+#### Listar Experimentos
+*   **Método:** `GET`
+*   **URL:** `{{base_url}}/api/examenes`
+*   **Auth:** No requerida
+
+#### Crear Experimento
+*   **Método:** `POST`
+*   **URL:** `{{base_url}}/api/examenes`
+*   **Auth:** Bearer Token (Requerido)
+*   **Body (JSON):**
+    ```json
+    {
+      "nombre": "Análisis de Espectroscopía",
+      "fecha_creacion": 2024,
+      "duracion_estimada": 90
+    }
+    ```
+
+### 5. Endpoints de Citas (Pruebas)
+
+#### Crear Cita
+*   **Método:** `POST`
+*   **URL:** `{{base_url}}/api/citas`
+*   **Auth:** Bearer Token (Requerido)
+*   **Body (JSON):**
+    ```json
+    {
+      "id_experimento": 1,
+      "id_laboratorio": 2,
+      "fecha_hora_inicio": "2024-12-01T10:00:00"
+    }
+    ```
+
+### 6. Endpoints de Insumos (Reactivos)
+
+#### Listar Insumos
+*   **Método:** `GET`
+*   **URL:** `{{base_url}}/api/insumos`
+*   **Auth:** No requerida
+
+#### Crear Insumo
+*   **Método:** `POST`
+*   **URL:** `{{base_url}}/api/insumos`
+*   **Auth:** Bearer Token (Requerido)
+*   **Body (JSON):**
+    ```json
+    {
+      "nombre": "Ácido Sulfúrico",
+      "descripcion": "Concentrado al 98%",
+      "precio": 45.50,
+      "stock": 20
+    }
+    ```
 
 ## 🎨 Vistas del Sistema
 
