@@ -1,23 +1,23 @@
-// ProductoController.js - Clase controladora para la gestión de productos
+// InsumoController.js - Clase controladora para la gestión de reactivos
 // Implementa POO con ES6 classes, consume DBService con async/await y gestiona errores
 // Maneja tanto rutas API (JSON) como rutas de vistas (EJS)
 
 const dbService = require('../database/DBService');
 
-class ProductoController {
+class InsumoController {
   // ========== MÉTODOS PARA RUTAS API (Retornan JSON) ==========
 
-  // GET /api/productos - Lista todos los productos
+  // GET /api/insumos - Lista todos los reactivos
   async apiListar(req, res) {
     try {
-      const productos = await dbService.getAllProductos();
+      const reactivos = await dbService.getAllReactivos();
       res.json({
         success: true,
-        data: productos,
-        count: productos.length
+        data: reactivos,
+        count: reactivos.length
       });
     } catch (error) {
-      console.error('Error en apiListar productos:', error);
+      console.error('Error en apiListar reactivos:', error);
       res.status(500).json({
         success: false,
         message: 'Error interno del servidor',
@@ -26,21 +26,21 @@ class ProductoController {
     }
   }
 
-  // GET /api/productos/:id - Muestra detalle de un producto por ID
+  // GET /api/insumos/:id - Muestra detalle de un reactivo por ID
   async apiObtener(req, res) {
     try {
       const { id } = req.params;
-      const producto = await dbService.getProductoById(id);
+      const reactivo = await dbService.getReactivoById(id);
       res.json({
         success: true,
-        data: producto
+        data: reactivo
       });
     } catch (error) {
-      console.error('Error en apiObtener producto:', error);
+      console.error('Error en apiObtener reactivo:', error);
       if (error.message.includes('no encontrado')) {
         return res.status(404).json({
           success: false,
-          message: 'Producto no encontrado'
+          message: 'reactivo no encontrado'
         });
       }
       res.status(500).json({
@@ -51,7 +51,7 @@ class ProductoController {
     }
   }
 
-  // POST /api/productos - Crea un nuevo producto
+  // POST /api/insumos - Crea un nuevo reactivo
   async apiCrear(req, res) {
     try {
       const { nombre, descripcion, precio, stock } = req.body;
@@ -71,7 +71,7 @@ class ProductoController {
         });
       }
 
-      const nuevoProducto = await dbService.createProducto({
+      const nuevoreactivo = await dbService.createReactivo({
         nombre,
         descripcion,
         precio,
@@ -80,11 +80,11 @@ class ProductoController {
 
       res.status(201).json({
         success: true,
-        message: 'Producto creado exitosamente',
-        data: nuevoProducto
+        message: 'reactivo creado exitosamente',
+        data: nuevoreactivo
       });
     } catch (error) {
-      console.error('Error en apiCrear producto:', error);
+      console.error('Error en apiCrear reactivo:', error);
       res.status(500).json({
         success: false,
         message: 'Error interno del servidor',
@@ -93,7 +93,7 @@ class ProductoController {
     }
   }
 
-  // PUT /api/productos/:id - Modifica todos los datos de un producto
+  // PUT /api/insumos/:id - Modifica todos los datos de un reactivo
   async apiActualizar(req, res) {
     try {
       const { id } = req.params;
@@ -114,7 +114,7 @@ class ProductoController {
         });
       }
 
-      const productoActualizado = await dbService.updateProducto(id, {
+      const reactivoActualizado = await dbService.updateReactivo(id, {
         nombre,
         descripcion,
         precio,
@@ -123,15 +123,15 @@ class ProductoController {
 
       res.json({
         success: true,
-        message: 'Producto actualizado exitosamente',
-        data: productoActualizado
+        message: 'reactivo actualizado exitosamente',
+        data: reactivoActualizado
       });
     } catch (error) {
-      console.error('Error en apiActualizar producto:', error);
+      console.error('Error en apiActualizar reactivo:', error);
       if (error.message.includes('no encontrado')) {
         return res.status(404).json({
           success: false,
-          message: 'Producto no encontrado'
+          message: 'reactivo no encontrado'
         });
       }
       res.status(500).json({
@@ -142,23 +142,23 @@ class ProductoController {
     }
   }
 
-  // DELETE /api/productos/:id - Elimina un producto por ID
+  // DELETE /api/insumos/:id - Elimina un reactivo por ID
   async apiEliminar(req, res) {
     try {
       const { id } = req.params;
-      const productoEliminado = await dbService.deleteProducto(id);
+      const reactivoEliminado = await dbService.deleteReactivo(id);
 
       res.json({
         success: true,
-        message: 'Producto eliminado exitosamente',
-        data: productoEliminado
+        message: 'reactivo eliminado exitosamente',
+        data: reactivoEliminado
       });
     } catch (error) {
-      console.error('Error en apiEliminar producto:', error);
+      console.error('Error en apiEliminar reactivo:', error);
       if (error.message.includes('no encontrado')) {
         return res.status(404).json({
           success: false,
-          message: 'Producto no encontrado'
+          message: 'reactivo no encontrado'
         });
       }
       res.status(500).json({
@@ -171,87 +171,87 @@ class ProductoController {
 
   // ========== MÉTODOS PARA RUTAS DE VISTAS (Retornan HTML con EJS) ==========
 
-  // GET /productos - Lista de productos
+  // GET /insumos - Lista de reactivos
   async listar(req, res) {
     try {
-      const productos = await dbService.getAllProductos();
-      res.render('productos/listar', {
-        title: 'Lista de Productos',
-        productos: productos
+      const reactivos = await dbService.getAllReactivos();
+      res.render('insumos/listar', {
+        title: 'Lista de reactivos',
+        reactivos: reactivos
       });
     } catch (error) {
-      console.error('Error en listar productos:', error);
+      console.error('Error en listar reactivos:', error);
       res.status(500).render('error', {
         title: 'Error',
-        message: 'Error al cargar la lista de productos',
+        message: 'Error al cargar la lista de reactivos',
         error: error.message
       });
     }
   }
 
-  // GET /productos/crear - Formulario de creación de producto
+  // GET /insumos/crear - Formulario de creación de reactivo
   crearForm(req, res) {
-    res.render('productos/crear', {
-      title: 'Crear Producto'
+    res.render('insumos/crear', {
+      title: 'Crear reactivo'
     });
   }
 
-  // POST /productos - Procesa creación de producto desde formulario
+  // POST /insumos - Procesa creación de reactivo desde formulario
   async crear(req, res) {
     try {
       const { nombre, descripcion, precio, stock } = req.body;
 
       // Validación básica
       if (!nombre || !descripcion || precio === undefined || stock === undefined) {
-        return res.render('productos/crear', {
-          title: 'Crear Producto',
+        return res.render('insumos/crear', {
+          title: 'Crear reactivo',
           error: 'Todos los campos son requeridos',
-          producto: req.body
+          reactivo: req.body
         });
       }
 
       if (precio < 0 || stock < 0) {
-        return res.render('productos/crear', {
-          title: 'Crear Producto',
+        return res.render('insumos/crear', {
+          title: 'Crear reactivo',
           error: 'Precio y stock deben ser valores positivos',
-          producto: req.body
+          reactivo: req.body
         });
       }
 
-      await dbService.createProducto({
+      await dbService.createReactivo({
         nombre,
         descripcion,
         precio,
         stock
       });
 
-      res.redirect('/productos');
+      res.redirect('/insumos');
     } catch (error) {
-      console.error('Error en crear producto:', error);
-      res.render('productos/crear', {
-        title: 'Crear Producto',
-        error: 'Error al crear el producto: ' + error.message,
-        producto: req.body
+      console.error('Error en crear reactivo:', error);
+      res.render('insumos/crear', {
+        title: 'Crear reactivo',
+        error: 'Error al crear el reactivo: ' + error.message,
+        reactivo: req.body
       });
     }
   }
 
-  // GET /productos/:id/editar - Formulario de edición de producto
+  // GET /insumos/:id/editar - Formulario de edición de reactivo
   async editarForm(req, res) {
     try {
       const { id } = req.params;
-      const producto = await dbService.getProductoById(id);
+      const reactivo = await dbService.getReactivoById(id);
 
-      res.render('productos/editar', {
-        title: 'Editar Producto',
-        producto: producto
+      res.render('insumos/editar', {
+        title: 'Editar reactivo',
+        reactivo: reactivo
       });
     } catch (error) {
-      console.error('Error en editarForm producto:', error);
+      console.error('Error en editarForm reactivo:', error);
       if (error.message.includes('no encontrado')) {
         return res.status(404).render('error', {
-          title: 'Producto no encontrado',
-          message: 'El producto que intenta editar no existe'
+          title: 'reactivo no encontrado',
+          message: 'El reactivo que intenta editar no existe'
         });
       }
       res.status(500).render('error', {
@@ -262,7 +262,7 @@ class ProductoController {
     }
   }
 
-  // POST /productos/:id/editar - Procesa edición de producto desde formulario
+  // POST /insumos/:id/editar - Procesa edición de reactivo desde formulario
   async editar(req, res) {
     try {
       const { id } = req.params;
@@ -270,39 +270,39 @@ class ProductoController {
 
       // Validación básica
       if (!nombre || !descripcion || precio === undefined || stock === undefined) {
-        const producto = await dbService.getProductoById(id);
-        return res.render('productos/editar', {
-          title: 'Editar Producto',
+        const reactivo = await dbService.getReactivoById(id);
+        return res.render('insumos/editar', {
+          title: 'Editar reactivo',
           error: 'Todos los campos son requeridos',
-          producto: { ...producto, ...req.body }
+          reactivo: { ...reactivo, ...req.body }
         });
       }
 
       if (precio < 0 || stock < 0) {
-        const producto = await dbService.getProductoById(id);
-        return res.render('productos/editar', {
-          title: 'Editar Producto',
+        const reactivo = await dbService.getReactivoById(id);
+        return res.render('insumos/editar', {
+          title: 'Editar reactivo',
           error: 'Precio y stock deben ser valores positivos',
-          producto: { ...producto, ...req.body }
+          reactivo: { ...reactivo, ...req.body }
         });
       }
 
-      await dbService.updateProducto(id, {
+      await dbService.updateReactivo(id, {
         nombre,
         descripcion,
         precio,
         stock
       });
 
-      res.redirect('/productos');
+      res.redirect('/insumos');
     } catch (error) {
-      console.error('Error en editar producto:', error);
+      console.error('Error en editar reactivo:', error);
       try {
-        const producto = await dbService.getProductoById(req.params.id);
-        res.render('productos/editar', {
-          title: 'Editar Producto',
-          error: 'Error al actualizar el producto: ' + error.message,
-          producto: { ...producto, ...req.body }
+        const reactivo = await dbService.getReactivoById(req.params.id);
+        res.render('insumos/editar', {
+          title: 'Editar reactivo',
+          error: 'Error al actualizar el reactivo: ' + error.message,
+          reactivo: { ...reactivo, ...req.body }
         });
       } catch (dbError) {
         res.status(500).render('error', {
@@ -315,4 +315,4 @@ class ProductoController {
   }
 }
 
-module.exports = new ProductoController();
+module.exports = new InsumoController();

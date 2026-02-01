@@ -1,984 +1,395 @@
-// DBService.js - Clase que encapsula la conexión y consultas a la BD MySQL
-// Utiliza mysql2 con Promesas para operaciones asíncronas reales de BD
-// Aplica el principio de Separación de Intereses (SoC) manteniendo la lógica de BD separada
-
-const mysql = require('mysql2/promise');
-require('dotenv').config();
+// DBService.js - Servicio de Base de Datos IN-MEMORY (Simulado)
+// Cumple con el requisito académico de "almacenar información en variables"
+// Mantiene las mismas firmas de métodos para compatibilidad con Controladores
 
 class DBService {
   constructor() {
-    this.connection = null;
-    this.initConnection();
+    // Inicialización de "Tablas" en memoria (Arrays)
+    this.reactivos = [
+      { id: 1, nombre: 'Ácido Clorhídrico 1L', descripcion: 'Ácido clorhídrico concentrado para análisis', precio: 15.50, stock: 100, fecha_creacion: '2025-10-22' },
+      { id: 2, nombre: 'Placas Petri (Pack 50)', descripcion: 'Placas de cultivo estériles', precio: 25.00, stock: 150, fecha_creacion: '2025-10-22' },
+      { id: 3, nombre: 'Pipetas Graduadas 10ml', descripcion: 'Set de pipetas graduadas de vidrio', precio: 18.00, stock: 80, fecha_creacion: '2025-10-22' }
+    ];
+
+    this.pedidos = []; // RESTORED: Inicialización de pedidos
+
+    this.users = [
+      { id: 1, username: 'admin', email: 'admin@example.com', password_hash: '$2b$10$IeyDE0DtGmqpSFl8r25.KesEvsH/C9OcxDOC90MzMfref6oykzeNq', role: 'admin', activo: 1 }, // admin 12345
+      { id: 2, username: 'user', email: 'user@example.com', password_hash: '$2b$10$IeyDE0DtGmqpSFl8r25.KesEvsH/C9OcxDOC90MzMfref6oykzeNq', role: 'user', activo: 1 }   // user 12345
+    ];
+    this.nextUserId = 3;
+
+    // Inicialización de nuevos módulos: Experimentos, Pruebas (Citas), Laboratorios
+    this.experimentos = [
+      { id: 1, nombre: 'Experimento de Titulación', fecha_creacion: 2024, duracion_estimada: 60 },
+      { id: 2, nombre: 'Cultivo de Bacterias', fecha_creacion: 2025, duracion_estimada: 120 }
+    ];
+    this.pruebas = [];
+    this.laboratorios = [
+      { id_laboratorio: 1, nombre: 'Laboratorio de Química', ubicacion: 'Edificio A' },
+      { id_laboratorio: 2, nombre: 'Laboratorio de Biología', ubicacion: 'Edificio B' },
+      { id_laboratorio: 3, nombre: 'Laboratorio de Física', ubicacion: 'Edificio C' }
+    ];
+
+    // Contadores para IDs automáticos
+    this.nextReactivoId = 4;
+    this.nextPedidoId = 1;
+    this.nextExperimentoId = 3;
+    this.nextPruebaId = 1;
+
+    console.log('BASE DE DATOS EN MEMORIA INICIALIZADA (Sin MySQL)');
   }
 
-  // Inicializar conexión a la base de datos
-  async initConnection() {
-    try {
-      this.connection = await mysql.createConnection({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        port: process.env.DB_PORT
-      });
-      console.log('Conexión a la base de datos establecida exitosamente');
-    } catch (error) {
-      console.error('Error al conectar con la base de datos:', error);
-      throw error;
-    }
+  // Helper para simular delay de BD (opcional)
+  async _delay(ms = 100) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // ========== MÉTODOS CRUD PARA PRODUCTOS ==========
+  // ========== MÉTODOS CRUD PARA REACTIVOS (Insumos) ==========
 
-  // CREATE - Crear un nuevo producto
-  async createProducto(productoData) {
-    try {
-      const query = `
-        INSERT INTO productos (nombre, descripcion, precio, stock, fecha_creacion)
-        VALUES (?, ?, ?, ?, CURDATE())
-      `;
-      const [result] = await this.connection.execute(query, [
-        productoData.nombre,
-        productoData.descripcion,
-        parseFloat(productoData.precio),
-        parseInt(productoData.stock)
-      ]);
-
-      // Obtener el producto creado
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM productos WHERE id = ?',
-        [result.insertId]
-      );
-
-      return rows[0];
-    } catch (error) {
-      throw new Error('Error al crear producto: ' + error.message);
-    }
+  async createReactivo(reactivoData) {
+    await this._delay();
+    const newReactivo = {
+      id: this.nextReactivoId++,
+      nombre: reactivoData.nombre,
+      descripcion: reactivoData.descripcion,
+      precio: parseFloat(reactivoData.precio),
+      stock: parseInt(reactivoData.stock),
+      fecha_creacion: new Date().toISOString().split('T')[0] // YYYY-MM-DD
+    };
+    this.reactivos.push(newReactivo);
+    return newReactivo;
   }
 
-  // READ - Obtener todos los productos
-  async getAllProductos() {
-    try {
-      const [rows] = await this.connection.execute('SELECT * FROM productos ORDER BY id DESC');
-      // Convertir precio a número para compatibilidad con vistas EJS
-      return rows.map(producto => ({
-        ...producto,
-        precio: parseFloat(producto.precio)
-      }));
-    } catch (error) {
-      throw new Error('Error al obtener productos: ' + error.message);
-    }
+  async getAllReactivos() {
+    await this._delay();
+    return [...this.reactivos].sort((a, b) => b.id - a.id); // Orden DESC
   }
 
-  // READ - Obtener producto por ID
-  async getProductoById(id) {
-    try {
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM productos WHERE id = ?',
-        [parseInt(id)]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Producto no encontrado');
-      }
-
-      // Convertir precio a número para compatibilidad con vistas EJS
-      return {
-        ...rows[0],
-        precio: parseFloat(rows[0].precio)
-      };
-    } catch (error) {
-      if (error.message.includes('Producto no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al obtener producto: ' + error.message);
-    }
+  async getReactivoById(id) {
+    await this._delay();
+    const reactivo = this.reactivos.find(r => r.id === parseInt(id));
+    if (!reactivo) throw new Error('Reactivo no encontrado');
+    return reactivo;
   }
 
-  // UPDATE - Actualizar producto completo
-  async updateProducto(id, productoData) {
-    try {
-      const query = `
-        UPDATE productos
-        SET nombre = ?, descripcion = ?, precio = ?, stock = ?
-        WHERE id = ?
-      `;
-      const [result] = await this.connection.execute(query, [
-        productoData.nombre,
-        productoData.descripcion,
-        parseFloat(productoData.precio),
-        parseInt(productoData.stock),
-        parseInt(id)
-      ]);
+  async updateReactivo(id, reactivoData) {
+    await this._delay();
+    const index = this.reactivos.findIndex(r => r.id === parseInt(id));
+    if (index === -1) throw new Error('Reactivo no encontrado');
 
-      if (result.affectedRows === 0) {
-        throw new Error('Producto no encontrado');
-      }
-
-      // Obtener el producto actualizado
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM productos WHERE id = ?',
-        [parseInt(id)]
-      );
-
-      return {
-        ...rows[0],
-        precio: parseFloat(rows[0].precio)
-      };
-    } catch (error) {
-      if (error.message.includes('Producto no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al actualizar producto: ' + error.message);
-    }
+    this.reactivos[index] = {
+      ...this.reactivos[index],
+      nombre: reactivoData.nombre,
+      descripcion: reactivoData.descripcion,
+      precio: parseFloat(reactivoData.precio),
+      stock: parseInt(reactivoData.stock)
+    };
+    return this.reactivos[index];
   }
 
-  // DELETE - Eliminar producto por ID
-  async deleteProducto(id) {
-    try {
-      // Primero verificar que el producto existe y obtener sus datos
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM productos WHERE id = ?',
-        [parseInt(id)]
-      );
+  async deleteReactivo(id) {
+    await this._delay();
+    const index = this.reactivos.findIndex(r => r.id === parseInt(id));
+    if (index === -1) throw new Error('Reactivo no encontrado');
 
-      if (rows.length === 0) {
-        throw new Error('Producto no encontrado');
-      }
-
-      // Eliminar el producto
-      await this.connection.execute('DELETE FROM productos WHERE id = ?', [parseInt(id)]);
-
-      return {
-        ...rows[0],
-        precio: parseFloat(rows[0].precio)
-      };
-    } catch (error) {
-      if (error.message.includes('Producto no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al eliminar producto: ' + error.message);
-    }
+    const deleted = this.reactivos.splice(index, 1)[0];
+    return deleted;
   }
 
-  // ========== MÉTODOS CRUD PARA PEDIDOS ==========
+  // ========== MÉTODOS LEGACY (Alias para compatibilidad) ==========
+  // Redirigen a los métodos de Reactivos para evitar errores "Productos no existe"
 
-  // CREATE - Crear un nuevo pedido
+  async createProducto(data) { return this.createReactivo(data); }
+  async getAllProductos() { return this.getAllReactivos(); }
+  async getProductoById(id) { return this.getReactivoById(id); }
+  async updateProducto(id, data) { return this.updateReactivo(id, data); }
+  async deleteProducto(id) { return this.deleteReactivo(id); }
+
+
+  // ========== MÉTODOS CRUD PARA PEDIDOS (Órdenes) ==========
+
   async createPedido(pedidoData) {
-    try {
-      // Verificar que el producto existe
-      await this.getProductoById(pedidoData.producto_id);
+    await this._delay();
+    // Verificar producto existe
+    await this.getReactivoById(pedidoData.producto_id);
 
-      const query = `
-        INSERT INTO pedidos (producto_id, cantidad, fecha_pedido)
-        VALUES (?, ?, CURDATE())
-      `;
-      const [result] = await this.connection.execute(query, [
-        parseInt(pedidoData.producto_id),
-        parseInt(pedidoData.cantidad)
-      ]);
-
-      // Obtener el pedido creado
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM pedidos WHERE id = ?',
-        [result.insertId]
-      );
-
-      return rows[0];
-    } catch (error) {
-      throw new Error('Error al crear pedido: ' + error.message);
-    }
+    const newPedido = {
+      id: this.nextPedidoId++,
+      producto_id: parseInt(pedidoData.producto_id),
+      cantidad: parseInt(pedidoData.cantidad),
+      fecha_pedido: new Date().toISOString().split('T')[0] // YYYY-MM-DD
+    };
+    this.pedidos.push(newPedido);
+    return newPedido;
   }
 
-  // READ - Obtener todos los pedidos
   async getAllPedidos() {
-    try {
-      const [rows] = await this.connection.execute('SELECT * FROM pedidos ORDER BY id DESC');
-      return rows;
-    } catch (error) {
-      throw new Error('Error al obtener pedidos: ' + error.message);
-    }
+    await this._delay();
+    return [...this.pedidos].sort((a, b) => b.id - a.id);
   }
 
-  // READ - Obtener los últimos 5 pedidos ordenados por fecha
   async getUltimosPedidos() {
-    try {
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM pedidos ORDER BY fecha_pedido DESC, id DESC LIMIT 5'
-      );
-      return rows;
-    } catch (error) {
-      throw new Error('Error al obtener últimos pedidos: ' + error.message);
-    }
+    await this._delay();
+    // Ordenar por fecha DESC, y luego ID DESC
+    return [...this.pedidos]
+      .sort((a, b) => {
+        if (b.fecha_pedido !== a.fecha_pedido) {
+          return new Date(b.fecha_pedido) - new Date(a.fecha_pedido);
+        }
+        return b.id - a.id;
+      })
+      .slice(0, 5);
   }
 
-  // READ - Obtener pedido por ID
+  async getPedidosByDateRange(inicio, fin) {
+    await this._delay();
+    const start = new Date(inicio);
+    const end = new Date(fin);
+    // Ajustar fin al final del día
+    end.setHours(23, 59, 59, 999);
+
+    return this.pedidos.filter(p => {
+      const pDate = new Date(p.fecha_pedido);
+      return pDate >= start && pDate <= end;
+    }).sort((a, b) => new Date(b.fecha_pedido) - new Date(a.fecha_pedido));
+  }
+
   async getPedidoById(id) {
-    try {
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM pedidos WHERE id = ?',
-        [parseInt(id)]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Pedido no encontrado');
-      }
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Pedido no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al obtener pedido: ' + error.message);
-    }
+    await this._delay();
+    const pedido = this.pedidos.find(p => p.id === parseInt(id));
+    if (!pedido) throw new Error('Pedido no encontrado');
+    return pedido;
   }
 
-  // UPDATE - Actualizar pedido completo
   async updatePedido(id, pedidoData) {
-    try {
-      // Verificar que el producto existe
-      await this.getProductoById(pedidoData.producto_id);
+    await this._delay();
+    const index = this.pedidos.findIndex(p => p.id === parseInt(id));
+    if (index === -1) throw new Error('Pedido no encontrado');
 
-      const query = `
-        UPDATE pedidos
-        SET producto_id = ?, cantidad = ?
-        WHERE id = ?
-      `;
-      const [result] = await this.connection.execute(query, [
-        parseInt(pedidoData.producto_id),
-        parseInt(pedidoData.cantidad),
-        parseInt(id)
-      ]);
+    // Verificar producto
+    await this.getReactivoById(pedidoData.producto_id);
 
-      if (result.affectedRows === 0) {
-        throw new Error('Pedido no encontrado');
-      }
-
-      // Obtener el pedido actualizado
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM pedidos WHERE id = ?',
-        [parseInt(id)]
-      );
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Pedido no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al actualizar pedido: ' + error.message);
-    }
+    this.pedidos[index] = {
+      ...this.pedidos[index],
+      producto_id: parseInt(pedidoData.producto_id),
+      cantidad: parseInt(pedidoData.cantidad)
+    };
+    return this.pedidos[index];
   }
 
-  // DELETE - Eliminar pedido por ID
-  async deletePedido(id) {
-    try {
-      // Primero verificar que el pedido existe y obtener sus datos
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM pedidos WHERE id = ?',
-        [parseInt(id)]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Pedido no encontrado');
-      }
-
-      // Eliminar el pedido
-      await this.connection.execute('DELETE FROM pedidos WHERE id = ?', [parseInt(id)]);
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Pedido no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al eliminar pedido: ' + error.message);
-    }
-  }
-
-  // DELETE - Eliminar relación específica entre pedido y producto
   async deletePedidoProducto(pedidoId, productoId) {
-    try {
-      const query = `
-        DELETE FROM pedidos
-        WHERE id = ? AND producto_id = ?
-      `;
-      const [result] = await this.connection.execute(query, [
-        parseInt(pedidoId),
-        parseInt(productoId)
-      ]);
+    await this._delay();
+    const index = this.pedidos.findIndex(p =>
+      p.id === parseInt(pedidoId) && p.producto_id === parseInt(productoId)
+    );
+    if (index === -1) throw new Error('Relación pedido-producto no encontrada');
 
-      if (result.affectedRows === 0) {
-        throw new Error('Relación pedido-producto no encontrada');
-      }
-
-      return { id: parseInt(pedidoId), producto_id: parseInt(productoId) };
-    } catch (error) {
-      if (error.message.includes('Relación pedido-producto no encontrada')) {
-        throw error;
-      }
-      throw new Error('Error al eliminar relación pedido-producto: ' + error.message);
-    }
+    const deleted = this.pedidos.splice(index, 1)[0];
+    return { id: deleted.id, producto_id: deleted.producto_id };
   }
 
-  // ========== MÉTODOS CRUD PARA PELÍCULAS ==========
 
-  // CREATE - Crear una nueva película
-  async createPelicula(peliculaData) {
-    try {
-      const query = `
-        INSERT INTO peliculas (titulo, anio, duracion)
-        VALUES (?, ?, ?)
-      `;
-      const [result] = await this.connection.execute(query, [
-        peliculaData.titulo,
-        parseInt(peliculaData.anio),
-        parseInt(peliculaData.duracion)
-      ]);
+  // ========== MÉTODOS DE USUARIOS COMPLETO (Soporte Auth + CRUD) ==========
 
-      // Obtener la película creada
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM peliculas WHERE id_pelicula = ?',
-        [result.insertId]
-      );
-
-      return rows[0];
-    } catch (error) {
-      throw new Error('Error al crear película: ' + error.message);
-    }
-  }
-
-  // READ - Obtener todas las películas
-  async getAllPeliculas() {
-    try {
-      const [rows] = await this.connection.execute('SELECT * FROM peliculas ORDER BY id_pelicula DESC');
-      return rows;
-    } catch (error) {
-      throw new Error('Error al obtener películas: ' + error.message);
-    }
-  }
-
-  // READ - Obtener película por ID
-  async getPeliculaById(id) {
-    try {
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM peliculas WHERE id_pelicula = ?',
-        [parseInt(id)]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Película no encontrada');
-      }
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Película no encontrada')) {
-        throw error;
-      }
-      throw new Error('Error al obtener película: ' + error.message);
-    }
-  }
-
-  // UPDATE - Actualizar película completa
-  async updatePelicula(id, peliculaData) {
-    try {
-      const query = `
-        UPDATE peliculas
-        SET titulo = ?, anio = ?, duracion = ?
-        WHERE id_pelicula = ?
-      `;
-      const [result] = await this.connection.execute(query, [
-        peliculaData.titulo,
-        parseInt(peliculaData.anio),
-        parseInt(peliculaData.duracion),
-        parseInt(id)
-      ]);
-
-      if (result.affectedRows === 0) {
-        throw new Error('Película no encontrada');
-      }
-
-      // Obtener la película actualizada
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM peliculas WHERE id_pelicula = ?',
-        [parseInt(id)]
-      );
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Película no encontrada')) {
-        throw error;
-      }
-      throw new Error('Error al actualizar película: ' + error.message);
-    }
-  }
-
-  // DELETE - Eliminar película por ID
-  async deletePelicula(id) {
-    try {
-      // Primero verificar que la película existe y obtener sus datos
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM peliculas WHERE id_pelicula = ?',
-        [parseInt(id)]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Película no encontrada');
-      }
-
-      // Eliminar la película
-      await this.connection.execute('DELETE FROM peliculas WHERE id_pelicula = ?', [parseInt(id)]);
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Película no encontrada')) {
-        throw error;
-      }
-      throw new Error('Error al eliminar película: ' + error.message);
-    }
-  }
-
-  // ========== MÉTODOS CRUD PARA SALAS ==========
-
-  // CREATE - Crear una nueva sala
-  async createSala(salaData) {
-    try {
-      const query = `
-        INSERT INTO salas (nombre, capacidad)
-        VALUES (?, ?)
-      `;
-      const [result] = await this.connection.execute(query, [
-        salaData.nombre,
-        parseInt(salaData.capacidad)
-      ]);
-
-      // Obtener la sala creada
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM salas WHERE id_sala = ?',
-        [result.insertId]
-      );
-
-      return rows[0];
-    } catch (error) {
-      throw new Error('Error al crear sala: ' + error.message);
-    }
-  }
-
-  // READ - Obtener todas las salas
-  async getAllSalas() {
-    try {
-      const [rows] = await this.connection.execute('SELECT * FROM salas ORDER BY id_sala DESC');
-      return rows;
-    } catch (error) {
-      throw new Error('Error al obtener salas: ' + error.message);
-    }
-  }
-
-  // READ - Obtener sala por ID
-  async getSalaById(id) {
-    try {
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM salas WHERE id_sala = ?',
-        [parseInt(id)]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Sala no encontrada');
-      }
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Sala no encontrada')) {
-        throw error;
-      }
-      throw new Error('Error al obtener sala: ' + error.message);
-    }
-  }
-
-  // UPDATE - Actualizar sala completa
-  async updateSala(id, salaData) {
-    try {
-      const query = `
-        UPDATE salas
-        SET nombre = ?, capacidad = ?
-        WHERE id_sala = ?
-      `;
-      const [result] = await this.connection.execute(query, [
-        salaData.nombre,
-        parseInt(salaData.capacidad),
-        parseInt(id)
-      ]);
-
-      if (result.affectedRows === 0) {
-        throw new Error('Sala no encontrada');
-      }
-
-      // Obtener la sala actualizada
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM salas WHERE id_sala = ?',
-        [parseInt(id)]
-      );
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Sala no encontrada')) {
-        throw error;
-      }
-      throw new Error('Error al actualizar sala: ' + error.message);
-    }
-  }
-
-  // DELETE - Eliminar sala por ID
-  async deleteSala(id) {
-    try {
-      // Primero verificar que la sala existe y obtener sus datos
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM salas WHERE id_sala = ?',
-        [parseInt(id)]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Sala no encontrada');
-      }
-
-      // Eliminar la sala
-      await this.connection.execute('DELETE FROM salas WHERE id_sala = ?', [parseInt(id)]);
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Sala no encontrada')) {
-        throw error;
-      }
-      throw new Error('Error al eliminar sala: ' + error.message);
-    }
-  }
-
-  // ========== MÉTODOS CRUD PARA MÉTODOS DE PAGO ==========
-
-  // CREATE - Crear un nuevo método de pago
-  async createMetodoPago(metodoData) {
-    try {
-      const query = `
-        INSERT INTO metodos_pago (nombre)
-        VALUES (?)
-      `;
-      const [result] = await this.connection.execute(query, [metodoData.nombre]);
-
-      // Obtener el método de pago creado
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM metodos_pago WHERE id_metodo = ?',
-        [result.insertId]
-      );
-
-      return rows[0];
-    } catch (error) {
-      throw new Error('Error al crear método de pago: ' + error.message);
-    }
-  }
-
-  // READ - Obtener todos los métodos de pago
-  async getAllMetodosPago() {
-    try {
-      const [rows] = await this.connection.execute('SELECT * FROM metodos_pago ORDER BY id_metodo DESC');
-      return rows;
-    } catch (error) {
-      throw new Error('Error al obtener métodos de pago: ' + error.message);
-    }
-  }
-
-  // READ - Obtener método de pago por ID
-  async getMetodoPagoById(id) {
-    try {
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM metodos_pago WHERE id_metodo = ?',
-        [parseInt(id)]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Método de pago no encontrado');
-      }
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Método de pago no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al obtener método de pago: ' + error.message);
-    }
-  }
-
-  // UPDATE - Actualizar método de pago completo
-  async updateMetodoPago(id, metodoData) {
-    try {
-      const query = `
-        UPDATE metodos_pago
-        SET nombre = ?
-        WHERE id_metodo = ?
-      `;
-      const [result] = await this.connection.execute(query, [
-        metodoData.nombre,
-        parseInt(id)
-      ]);
-
-      if (result.affectedRows === 0) {
-        throw new Error('Método de pago no encontrado');
-      }
-
-      // Obtener el método de pago actualizado
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM metodos_pago WHERE id_metodo = ?',
-        [parseInt(id)]
-      );
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Método de pago no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al actualizar método de pago: ' + error.message);
-    }
-  }
-
-  // DELETE - Eliminar método de pago por ID
-  async deleteMetodoPago(id) {
-    try {
-      // Primero verificar que el método de pago existe y obtener sus datos
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM metodos_pago WHERE id_metodo = ?',
-        [parseInt(id)]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Método de pago no encontrado');
-      }
-
-      // Eliminar el método de pago
-      await this.connection.execute('DELETE FROM metodos_pago WHERE id_metodo = ?', [parseInt(id)]);
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Método de pago no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al eliminar método de pago: ' + error.message);
-    }
-  }
-
-  // ========== MÉTODOS CRUD PARA FUNCIONES ==========
-
-  // CREATE - Crear una nueva función
-  async createFuncion(funcionData) {
-    try {
-      // Verificar que la película y sala existen
-      await this.getPeliculaById(funcionData.id_pelicula);
-      await this.getSalaById(funcionData.id_sala);
-
-      const query = `
-        INSERT INTO funciones (id_pelicula, id_sala, fecha_hora)
-        VALUES (?, ?, ?)
-      `;
-      const [result] = await this.connection.execute(query, [
-        parseInt(funcionData.id_pelicula),
-        parseInt(funcionData.id_sala),
-        funcionData.fecha_hora
-      ]);
-
-      // Obtener la función creada
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM funciones WHERE id_funcion = ?',
-        [result.insertId]
-      );
-
-      return rows[0];
-    } catch (error) {
-      throw new Error('Error al crear función: ' + error.message);
-    }
-  }
-
-  // READ - Obtener todas las funciones
-  async getAllFunciones() {
-    try {
-      const [rows] = await this.connection.execute('SELECT * FROM funciones ORDER BY id_funcion DESC');
-      return rows;
-    } catch (error) {
-      throw new Error('Error al obtener funciones: ' + error.message);
-    }
-  }
-
-  // READ - Obtener función por ID
-  async getFuncionById(id) {
-    try {
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM funciones WHERE id_funcion = ?',
-        [parseInt(id)]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Función no encontrada');
-      }
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Función no encontrada')) {
-        throw error;
-      }
-      throw new Error('Error al obtener función: ' + error.message);
-    }
-  }
-
-  // UPDATE - Actualizar función completa
-  async updateFuncion(id, funcionData) {
-    try {
-      // Verificar que la película y sala existen
-      await this.getPeliculaById(funcionData.id_pelicula);
-      await this.getSalaById(funcionData.id_sala);
-
-      const query = `
-        UPDATE funciones
-        SET id_pelicula = ?, id_sala = ?, fecha_hora = ?
-        WHERE id_funcion = ?
-      `;
-      const [result] = await this.connection.execute(query, [
-        parseInt(funcionData.id_pelicula),
-        parseInt(funcionData.id_sala),
-        funcionData.fecha_hora,
-        parseInt(id)
-      ]);
-
-      if (result.affectedRows === 0) {
-        throw new Error('Función no encontrada');
-      }
-
-      // Obtener la función actualizada
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM funciones WHERE id_funcion = ?',
-        [parseInt(id)]
-      );
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Función no encontrada')) {
-        throw error;
-      }
-      throw new Error('Error al actualizar función: ' + error.message);
-    }
-  }
-
-  // DELETE - Eliminar función por ID
-  async deleteFuncion(id) {
-    try {
-      // Primero verificar que la función existe y obtener sus datos
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM funciones WHERE id_funcion = ?',
-        [parseInt(id)]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Función no encontrada');
-      }
-
-      // Eliminar la función
-      await this.connection.execute('DELETE FROM funciones WHERE id_funcion = ?', [parseInt(id)]);
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Función no encontrada')) {
-        throw error;
-      }
-      throw new Error('Error al eliminar función: ' + error.message);
-    }
-  }
-
-  // ========== MÉTODOS CRUD PARA USUARIOS ==========
-
-  // CREATE - Crear un nuevo usuario
-  async createUsuario(userData) {
-    try {
-      const query = `
-        INSERT INTO usuarios (username, email, password_hash, role, activo)
-        VALUES (?, ?, ?, ?, ?)
-      `;
-      const [result] = await this.connection.execute(query, [
-        userData.username,
-        userData.email,
-        userData.password_hash,
-        userData.role || 'user',
-        userData.activo !== undefined ? userData.activo : 1
-      ]);
-
-      // Obtener el usuario creado (sin password_hash por seguridad)
-      const [rows] = await this.connection.execute(
-        'SELECT id, username, email, role, activo, fecha_creacion, fecha_actualizacion FROM usuarios WHERE id = ?',
-        [result.insertId]
-      );
-
-      return rows[0];
-    } catch (error) {
-      throw new Error('Error al crear usuario: ' + error.message);
-    }
-  }
-
-  // READ - Obtener todos los usuarios
-  async getAllUsuarios() {
-    try {
-      const [rows] = await this.connection.execute(
-        'SELECT id, username, email, role, activo, fecha_creacion, fecha_actualizacion FROM usuarios ORDER BY id DESC'
-      );
-      return rows;
-    } catch (error) {
-      throw new Error('Error al obtener usuarios: ' + error.message);
-    }
-  }
-
-  // READ - Obtener usuario por ID
-  async getUsuarioById(id) {
-    try {
-      const [rows] = await this.connection.execute(
-        'SELECT id, username, email, role, activo, fecha_creacion, fecha_actualizacion FROM usuarios WHERE id = ?',
-        [parseInt(id)]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Usuario no encontrado');
-      }
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Usuario no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al obtener usuario: ' + error.message);
-    }
-  }
-
-  // READ - Obtener usuario por username (para login)
+  // Busca usuario por username (Login)
   async getUsuarioByUsername(username) {
-    try {
-      const [rows] = await this.connection.execute(
-        'SELECT * FROM usuarios WHERE username = ? AND activo = 1',
-        [username]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Usuario no encontrado');
-      }
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Usuario no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al obtener usuario: ' + error.message);
-    }
+    await this._delay();
+    const user = this.users.find(u => u.username === username);
+    if (!user) throw new Error('Usuario no encontrado');
+    return user;
   }
 
-  // READ - Obtener usuario por email
+  // Busca usuario por email (Registro)
   async getUsuarioByEmail(email) {
-    try {
-      const [rows] = await this.connection.execute(
-        'SELECT id, username, email, role, activo, fecha_creacion, fecha_actualizacion FROM usuarios WHERE email = ?',
-        [email]
-      );
-
-      if (rows.length === 0) {
-        throw new Error('Usuario no encontrado');
-      }
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Usuario no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al obtener usuario: ' + error.message);
-    }
+    await this._delay();
+    const user = this.users.find(u => u.email === email);
+    if (!user) throw new Error('Usuario no encontrado');
+    return user;
   }
 
-  // UPDATE - Actualizar usuario completo
+  // Busca usuario por ID (Profile/Edit)
+  async getUsuarioById(id) {
+    await this._delay();
+    const user = this.users.find(u => u.id === parseInt(id));
+    if (!user) throw new Error('Usuario no encontrado');
+    return user;
+  }
+
+  // Crear usuario (Registro/Admin)
+  async createUsuario(userData) {
+    await this._delay();
+    const newUser = {
+      id: this.nextUserId++,
+      username: userData.username,
+      email: userData.email,
+      password_hash: userData.password_hash,
+      role: userData.role || 'user',
+      activo: 1, // Por defecto activo
+      created_at: new Date()
+    };
+    this.users.push(newUser);
+    return newUser;
+  }
+
+  // Obtener todos los usuarios (Admin List)
+  async getAllUsuarios() {
+    await this._delay();
+    // Clonar para evitar mutaciones externas directas
+    return this.users.map(u => ({ ...u }));
+  }
+
+  // Actualizar usuario (Admin Edit)
   async updateUsuario(id, userData) {
-    try {
-      const query = `
-        UPDATE usuarios
-        SET username = ?, email = ?, role = ?, activo = ?
-        WHERE id = ?
-      `;
-      const [result] = await this.connection.execute(query, [
-        userData.username,
-        userData.email,
-        userData.role,
-        userData.activo !== undefined ? userData.activo : 1,
-        parseInt(id)
-      ]);
+    await this._delay();
+    const index = this.users.findIndex(u => u.id === parseInt(id));
+    if (index === -1) throw new Error('Usuario no encontrado');
 
-      if (result.affectedRows === 0) {
-        throw new Error('Usuario no encontrado');
-      }
+    // Mantener datos existentes si no se envían nuevos
+    const currentUser = this.users[index];
 
-      // Obtener el usuario actualizado
-      const [rows] = await this.connection.execute(
-        'SELECT id, username, email, role, activo, fecha_creacion, fecha_actualizacion FROM usuarios WHERE id = ?',
-        [parseInt(id)]
-      );
+    this.users[index] = {
+      ...currentUser,
+      username: userData.username !== undefined ? userData.username : currentUser.username,
+      email: userData.email !== undefined ? userData.email : currentUser.email,
+      role: userData.role !== undefined ? userData.role : currentUser.role,
+      activo: userData.activo !== undefined ? userData.activo : currentUser.activo,
+      password_hash: userData.password_hash !== undefined ? userData.password_hash : currentUser.password_hash
+    };
 
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Usuario no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al actualizar usuario: ' + error.message);
-    }
+    return this.users[index];
   }
 
-  // UPDATE - Actualizar contraseña
-  async updateUsuarioPassword(id, passwordHash) {
-    try {
-      const query = `
-        UPDATE usuarios
-        SET password_hash = ?
-        WHERE id = ?
-      `;
-      const [result] = await this.connection.execute(query, [
-        passwordHash,
-        parseInt(id)
-      ]);
-
-      if (result.affectedRows === 0) {
-        throw new Error('Usuario no encontrado');
-      }
-
-      return { id: parseInt(id), updated: true };
-    } catch (error) {
-      if (error.message.includes('Usuario no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al actualizar contraseña: ' + error.message);
-    }
-  }
-
-  // DELETE - Eliminar usuario por ID (desactivar)
+  // Eliminar usuario (Admin Delete / Desactivar)
   async deleteUsuario(id) {
-    try {
-      // Primero verificar que el usuario existe
-      const [rows] = await this.connection.execute(
-        'SELECT id, username, email FROM usuarios WHERE id = ?',
-        [parseInt(id)]
-      );
+    await this._delay();
+    const index = this.users.findIndex(u => u.id === parseInt(id));
+    if (index === -1) throw new Error('Usuario no encontrado');
 
-      if (rows.length === 0) {
-        throw new Error('Usuario no encontrado');
-      }
-
-      // Desactivar usuario en lugar de eliminar físicamente
-      await this.connection.execute(
-        'UPDATE usuarios SET activo = 0 WHERE id = ?',
-        [parseInt(id)]
-      );
-
-      return rows[0];
-    } catch (error) {
-      if (error.message.includes('Usuario no encontrado')) {
-        throw error;
-      }
-      throw new Error('Error al eliminar usuario: ' + error.message);
-    }
+    const deleted = this.users.splice(index, 1)[0];
+    return deleted;
   }
+
+  // Métodos Legacy
+  async getUserByUsername(u) { return this.getUsuarioByUsername(u); }
+  async getUserById(id) { return this.getUsuarioById(id); }
+
+
+  // ========== MÉTODOS CRUD PARA EXPERIMENTOS (Examenes) ==========
+
+  async getAllExperimentos() {
+    await this._delay();
+    return [...this.experimentos].sort((a, b) => b.id - a.id);
+  }
+
+  async getExperimentoById(id) {
+    await this._delay();
+    const exp = this.experimentos.find(e => e.id === parseInt(id));
+    if (!exp) throw new Error('Experimento no encontrado');
+    return exp;
+  }
+
+  async createExperimento(data) {
+    await this._delay();
+    const newExp = {
+      id: this.nextExperimentoId++,
+      nombre: data.nombre,
+      fecha_creacion: parseInt(data.fecha_creacion),
+      duracion_estimada: parseInt(data.duracion_estimada)
+    };
+    this.experimentos.push(newExp);
+    return newExp;
+  }
+
+  async updateExperimento(id, data) {
+    await this._delay();
+    const index = this.experimentos.findIndex(e => e.id === parseInt(id));
+    if (index === -1) throw new Error('Experimento no encontrado');
+
+    this.experimentos[index] = {
+      ...this.experimentos[index],
+      nombre: data.nombre,
+      fecha_creacion: parseInt(data.fecha_creacion),
+      duracion_estimada: parseInt(data.duracion_estimada)
+    };
+    return this.experimentos[index];
+  }
+
+  async deleteExperimento(id) {
+    await this._delay();
+    const index = this.experimentos.findIndex(e => e.id === parseInt(id));
+    if (index === -1) throw new Error('Experimento no encontrado');
+
+    const deleted = this.experimentos.splice(index, 1)[0];
+    return deleted;
+  }
+
+
+  // ========== MÉTODOS CRUD PARA PRUEBAS (Citas) ==========
+
+  async getAllPruebas() {
+    await this._delay();
+    return [...this.pruebas].sort((a, b) => b.id_prueba - a.id_prueba); // Asumiendo id_prueba o id
+  }
+
+  async getPruebaById(id) {
+    await this._delay();
+    const prueba = this.pruebas.find(p => p.id === parseInt(id));
+    if (!prueba) throw new Error('Prueba no encontrada');
+    return prueba;
+  }
+
+  async createPrueba(data) {
+    await this._delay();
+    // Validar FKs
+    if (!this.experimentos.find(e => e.id === parseInt(data.id_experimento))) throw new Error('Experimento no encontrado');
+    if (!this.laboratorios.find(l => l.id_laboratorio === parseInt(data.id_laboratorio))) throw new Error('Laboratorio no encontrado');
+
+    const newPrueba = {
+      id: this.nextPruebaId++,
+      id_experimento: parseInt(data.id_experimento),
+      id_laboratorio: parseInt(data.id_laboratorio),
+      fecha_hora_inicio: data.fecha_hora_inicio
+    };
+    this.pruebas.push(newPrueba);
+    return newPrueba;
+  }
+
+  async updatePrueba(id, data) {
+    await this._delay();
+    const index = this.pruebas.findIndex(p => p.id === parseInt(id));
+    if (index === -1) throw new Error('Prueba no encontrada');
+
+    // Validar FKs
+    if (!this.experimentos.find(e => e.id === parseInt(data.id_experimento))) throw new Error('Experimento no encontrado');
+    if (!this.laboratorios.find(l => l.id_laboratorio === parseInt(data.id_laboratorio))) throw new Error('Laboratorio no encontrado');
+
+    this.pruebas[index] = {
+      ...this.pruebas[index],
+      id_experimento: parseInt(data.id_experimento),
+      id_laboratorio: parseInt(data.id_laboratorio),
+      fecha_hora_inicio: data.fecha_hora_inicio
+    };
+    return this.pruebas[index];
+  }
+
+  async deletePrueba(id) {
+    await this._delay();
+    const index = this.pruebas.findIndex(p => p.id === parseInt(id));
+    if (index === -1) throw new Error('Prueba no encontrada');
+
+    const deleted = this.pruebas.splice(index, 1)[0];
+    return deleted;
+  }
+
+
+  // ========== MÉTODOS PARA LABORATORIOS ==========
+
+  async getAllLaboratorios() {
+    await this._delay();
+    return [...this.laboratorios];
+  }
+
 }
 
 module.exports = new DBService();

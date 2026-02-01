@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -27,7 +30,7 @@
             width: 100%;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             backdrop-filter: blur(10px);
         }
@@ -92,6 +95,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -270,7 +274,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 8px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .summary-item:last-child {
@@ -281,8 +285,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .actions {
@@ -318,7 +329,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -401,99 +412,103 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-plus-circle"></i> <%= title %></h1>
-            <div class="subtitle">Registra un nuevo pedido en el sistema</div>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <a href="/ordenes" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Volver al Listado
+                </a>
+            </div>
         </div>
 
-        <div class="content">
-            <div class="progress-indicator">
-                <div class="step">
-                    <i class="fas fa-shopping-cart"></i>
-                    Información del Pedido
-                </div>
+        <div class="form-container">
+            <div class="form-header">
+                <h3><i class="fas fa-file-invoice"></i> Información de la Orden</h3>
             </div>
 
-            <% if (typeof error !== 'undefined' && error) { %>
-                <div class="alert">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span><%= error %></span>
+            <% if (typeof error !=='undefined' && error) { %>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <%= error %>
                 </div>
-            <% } %>
+                <% } %>
 
-            <form action="/pedidos" method="POST" id="orderForm">
-                <div class="form-group">
-                    <label for="producto_id">
-                        <i class="fas fa-cube"></i> Seleccionar Producto *
-                    </label>
-                    <div class="input-wrapper">
-                        <select id="producto_id" name="producto_id" required>
-                            <option value="">Seleccione un producto disponible</option>
-                            <% productos.forEach(producto => { %>
-                                <option value="<%= producto.id %>"
-                                        data-price="<%= producto.precio %>"
-                                        data-stock="<%= producto.stock %>"
-                                        <%= (typeof pedido !== 'undefined' && pedido.producto_id == producto.id) ? 'selected' : '' %>>
-                                    <%= producto.nombre %> - $<%= producto.precio.toFixed(2) %> (Stock: <%= producto.stock %>)
-                                </option>
-                            <% }); %>
-                        </select>
-                        <i class="fas fa-chevron-down input-icon"></i>
-                    </div>
-                    <div class="input-hint">
-                        <i class="fas fa-info-circle"></i>
-                        Elige el producto que deseas ordenar
-                    </div>
-                </div>
+                    <form action="/ordenes" method="POST" id="orderForm">
+                        <div class="form-group">
+                            <label for="producto_id">
+                                <i class="fas fa-flask"></i> Reactivo *
+                            </label>
+                            <div class="input-wrapper">
+                                <select id="producto_id" name="producto_id" required>
+                                    <option value="">Seleccione un reactivo</option>
+                                    <% if (typeof productos !=='undefined' && productos) { %>
+                                        <% productos.forEach(producto=> { %>
+                                            <option value="<%= producto.id %>" data-price="<%= producto.precio %>"
+                                                data-stock="<%= producto.stock %>" <%=typeof pedido !=='undefined' &&
+                                                pedido.producto_id==producto.id ? 'selected' : '' %>>
+                                                <%= producto.nombre %> - Stock: <%= producto.stock %> - $<%=
+                                                            parseFloat(producto.precio).toFixed(2) %>
+                                            </option>
+                                            <% }); %>
+                                                <% } %>
+                                </select>
+                                <i class="fas fa-chevron-down input-icon"></i>
+                            </div>
+                            <div class="input-hint">
+                                <i class="fas fa-info-circle"></i>
+                                Elige el reactivo del laboratorio
+                            </div>
+                        </div>
 
-                <div class="form-group">
-                    <label for="cantidad">
-                        <i class="fas fa-hashtag"></i> Cantidad *
-                    </label>
-                    <div class="input-wrapper">
-                        <input type="number" id="cantidad" name="cantidad" min="1" required
-                               value="<%= typeof pedido !== 'undefined' ? pedido.cantidad || '' : '' %>"
-                               placeholder="Ingresa la cantidad">
-                        <i class="fas fa-shopping-basket input-icon"></i>
-                    </div>
-                    <div class="input-hint">
-                        <i class="fas fa-info-circle"></i>
-                        Número de unidades a ordenar
-                    </div>
-                </div>
-
-                <div class="order-summary" id="orderSummary">
-                    <h3><i class="fas fa-calculator"></i> Resumen del Pedido</h3>
-                    <div class="summary-item">
-                        <span>Producto:</span>
-                        <span id="summaryProduct">-</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Cantidad:</span>
-                        <span id="summaryQuantity">-</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Precio unitario:</span>
-                        <span id="summaryUnitPrice">$-</span>
-                    </div>
-                    <div class="summary-item">
-                        <span><strong>Total:</strong></span>
-                        <span id="summaryTotal"><strong>$-</strong></span>
-                    </div>
-                </div>
-
-                <div class="actions">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Crear Pedido
-                    </button>
-                    <a href="/pedidos" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> Cancelar
-                    </a>
-                </div>
-            </form>
+                        <div class="form-group">
+                            <label for="cantidad">
+                                <i class="fas fa-sort-numeric-up"></i> Cantidad *
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="number" id="cantidad" name="cantidad"
+                                    value="<%= typeof pedido !== 'undefined' ? pedido.cantidad : '' %>"
+                                    placeholder="Ingrese la cantidad a ordenar" min="1" required>
+                                <i class="fas fa-hashtag input-icon"></i>
+                            </div>
+                            <div class="input-hint">
+                                <i class="fas fa-info-circle"></i>
+                                Número de unidades a solicitar
+                            </div>
+                        </div>
         </div>
+
+        <div class="order-summary" id="orderSummary">
+            <h3><i class="fas fa-calculator"></i> Resumen del Pedido</h3>
+            <div class="summary-item">
+                <span>Producto:</span>
+                <span id="summaryProduct">-</span>
+            </div>
+            <div class="summary-item">
+                <span>Cantidad:</span>
+                <span id="summaryQuantity">-</span>
+            </div>
+            <div class="summary-item">
+                <span>Precio unitario:</span>
+                <span id="summaryUnitPrice">$-</span>
+            </div>
+            <div class="summary-item">
+                <span><strong>Total:</strong></span>
+                <span id="summaryTotal"><strong>$-</strong></span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Crear Pedido
+            </button>
+            <a href="/ordenes" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+        </form>
+    </div>
     </div>
 
     <script>
@@ -523,7 +538,7 @@
         }
 
         // Validación del formulario
-        document.getElementById('orderForm').addEventListener('submit', function(e) {
+        document.getElementById('orderForm').addEventListener('submit', function (e) {
             const select = document.getElementById('producto_id');
             const quantity = parseInt(document.getElementById('cantidad').value);
             const selectedOption = select.options[select.selectedIndex];
@@ -554,11 +569,11 @@
 
         // Efectos visuales en los inputs
         document.querySelectorAll('select, input').forEach(input => {
-            input.addEventListener('focus', function() {
+            input.addEventListener('focus', function () {
                 this.parentElement.style.transform = 'scale(1.02)';
             });
 
-            input.addEventListener('blur', function() {
+            input.addEventListener('blur', function () {
                 this.parentElement.style.transform = 'scale(1)';
             });
         });
@@ -567,4 +582,5 @@
         updateOrderSummary();
     </script>
 </body>
+
 </html>

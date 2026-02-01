@@ -27,14 +27,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Para procesar datos de formularios
 
 // Import routers existentes
-const peliculasRouter = require('./routes/PeliculasRouter');
-const funcionesRouter = require('./routes/FuncionesRouter');
-const salasRouter = require('./routes/SalasRouter');
+const examenesRouter = require('./routes/ExamenesRouter');
+const citasRouter = require('./routes/CitasRouter');
+const areasRouter = require('./routes/AreasRouter');
 const metodosPagoRouter = require('./routes/MetodosPagoRouter');
 
-// Import routers nuevos para Producto y Pedido
-const productosRouter = require('./routes/productos');
-const pedidosRouter = require('./routes/pedidos');
+// Import routers nuevos para Insumo y Orden
+const insumosRouter = require('./routes/insumos');
+const ordenesRouter = require('./routes/ordenes');
 
 // Import router de autenticación
 const authRouter = require('./routes/auth');
@@ -43,14 +43,14 @@ const authRouter = require('./routes/auth');
 const adminRouter = require('./routes/admin');
 
 // Use routers existentes (manejan tanto rutas API como de vistas)
-app.use('/', peliculasRouter);
-app.use('/', funcionesRouter);
-app.use('/', salasRouter);
+app.use('/', examenesRouter);
+app.use('/', citasRouter);
+app.use('/', areasRouter);
 app.use('/', metodosPagoRouter);
 
 // Use routers nuevos (manejan tanto rutas API como de vistas)
-app.use('/', productosRouter);
-app.use('/', pedidosRouter);
+app.use('/', insumosRouter);
+app.use('/', ordenesRouter);
 
 // Use router de autenticación
 app.use('/auth', authRouter);
@@ -75,7 +75,7 @@ app.get('/login', require('./controllers/UserController').showLoginForm);
 // Dashboard (requiere autenticación)
 app.get('/dashboard', require('./middleware/auth').requireWebAuth, (req, res) => {
   res.render('dashboard', {
-    title: 'Dashboard - Cine Glorimar',
+    title: 'Dashboard - Laboratorio Glorimar',
     user: req.session.user,
     error: req.query.error,
     success: req.query.success

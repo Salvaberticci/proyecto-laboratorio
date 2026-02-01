@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -24,7 +27,7 @@
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             backdrop-filter: blur(10px);
         }
@@ -126,7 +129,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -157,7 +160,7 @@
         .table-container {
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
@@ -178,7 +181,7 @@
         .search-box {
             display: flex;
             align-items: center;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 25px;
             padding: 8px 15px;
             gap: 10px;
@@ -194,11 +197,11 @@
         }
 
         .search-box input::placeholder {
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
         }
 
         .search-box i {
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.7);
         }
 
         table {
@@ -367,10 +370,13 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-boxes"></i> <%= title %></h1>
+            <h1><i class="fas fa-boxes"></i>
+                <%= title %>
+            </h1>
             <div class="subtitle">Gestión completa del inventario de productos</div>
         </div>
 
@@ -378,17 +384,21 @@
             <div class="actions-bar">
                 <div class="stats">
                     <div class="stat-card">
-                        <span class="number"><%= productos ? productos.length : 0 %></span>
-                        <span class="label">Productos</span>
+                        <span class="number">
+                            <%= reactivos ? reactivos.length : 0 %>
+                        </span>
+                        <span class="label">Reactivos</span>
                     </div>
                     <div class="stat-card">
-                        <span class="number"><%= productos ? productos.filter(p => p.stock < 10).length : 0 %></span>
+                        <span class="number">
+                            <%= reactivos ? reactivos.filter(p=> p.stock < 10).length : 0 %>
+                        </span>
                         <span class="label">Stock Bajo</span>
                     </div>
                 </div>
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <a href="/productos/crear" class="btn btn-success">
-                        <i class="fas fa-plus"></i> Nuevo Producto
+                    <a href="/insumos/crear" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Nuevo Reactivo
                     </a>
                     <a href="/" class="btn btn-primary">
                         <i class="fas fa-home"></i> Inicio
@@ -396,13 +406,13 @@
                 </div>
             </div>
 
-            <% if (productos && productos.length > 0) { %>
+            <% if (reactivos && reactivos.length> 0) { %>
                 <div class="table-container">
                     <div class="table-header">
-                        <h3><i class="fas fa-list"></i> Inventario de Productos</h3>
+                        <h3><i class="fas fa-list"></i> Inventario de Reactivos</h3>
                         <div class="search-box">
                             <i class="fas fa-search"></i>
-                            <input type="text" placeholder="Buscar productos..." id="searchInput">
+                            <input type="text" placeholder="Buscar reactivos..." id="searchInput">
                         </div>
                     </div>
 
@@ -410,7 +420,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Producto</th>
+                                <th>Reactivo</th>
                                 <th>Descripción</th>
                                 <th>Precio</th>
                                 <th>Stock</th>
@@ -419,67 +429,73 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% productos.forEach(producto => { %>
+                            <% reactivos.forEach(reactivo=> { %>
                                 <tr>
                                     <td>
-                                        <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">
-                                            #<%= producto.id %>
+                                        <span
+                                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold;">
+                                            #<%= reactivo.id %>
                                         </span>
                                     </td>
                                     <td>
                                         <div class="product-name">
-                                            <i class="fas fa-cube"></i>
-                                            <%= producto.nombre %>
+                                            <i class="fas fa-flask"></i>
+                                            <%= reactivo.nombre %>
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="product-description" title="<%= producto.descripcion %>">
-                                            <%= producto.descripcion %>
+                                        <div class="product-description" title="<%= reactivo.descripcion %>">
+                                            <%= reactivo.descripcion %>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="price"><%= producto.precio.toFixed(2) %></span>
+                                        <span class="price">
+                                            <%= parseFloat(reactivo.precio).toFixed(2) %>
+                                        </span>
                                     </td>
                                     <td>
-                                        <span class="stock <%= producto.stock < 5 ? 'low' : producto.stock < 15 ? 'medium' : 'high' %>">
-                                            <i class="fas fa-<%= producto.stock < 5 ? 'exclamation-triangle' : producto.stock < 15 ? 'exclamation-circle' : 'check-circle' %>"></i>
-                                            <%= producto.stock %>
+                                        <span
+                                            class="stock <%= reactivo.stock < 5 ? 'low' : reactivo.stock < 15 ? 'medium' : 'high' %>">
+                                            <i
+                                                class="fas fa-<%= reactivo.stock < 5 ? 'exclamation-triangle' : reactivo.stock < 15 ? 'exclamation-circle' : 'check-circle' %>"></i>
+                                            <%= reactivo.stock %>
                                         </span>
                                     </td>
                                     <td>
                                         <span class="date">
                                             <i class="fas fa-calendar"></i>
-                                            <%= new Date(producto.fecha_creacion).toLocaleDateString('es-ES') %>
+                                            <%= reactivo.fecha_creacion ? new
+                                                Date(reactivo.fecha_creacion).toLocaleDateString('es-ES') : 'N/A' %>
                                         </span>
                                     </td>
                                     <td>
                                         <div class="actions">
-                                            <a href="/productos/<%= producto.id %>/editar" class="btn btn-sm btn-edit">
+                                            <a href="/insumos/<%= reactivo.id %>/editar" class="btn btn-sm btn-edit">
                                                 <i class="fas fa-edit"></i> Editar
                                             </a>
                                         </div>
                                     </td>
                                 </tr>
-                            <% }); %>
+                                <% }); %>
                         </tbody>
                     </table>
                 </div>
-            <% } else { %>
-                <div class="empty-state">
-                    <i class="fas fa-box-open"></i>
-                    <h3>No hay productos registrados</h3>
-                    <p>¡Comienza creando el primer producto de tu inventario!</p>
-                    <a href="/productos/crear" class="btn btn-success">
-                        <i class="fas fa-plus"></i> Crear Primer Producto
-                    </a>
-                </div>
-            <% } %>
+                <% } else { %>
+                    <div class="empty-state">
+                        <i class="fas fa-flask"></i>
+                        <h3>No hay reactivos registrados</h3>
+                        <p>¡Comienza creando el primer reactivo de tu inventario!</p>
+                        <a href="/insumos/crear" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Crear Primer Reactivo
+                        </a>
+                    </div>
+                    <% } %>
         </div>
     </div>
 
     <script>
         // Función de búsqueda en tiempo real
-        document.getElementById('searchInput').addEventListener('input', function() {
+        document.getElementById('searchInput').addEventListener('input', function () {
             const searchTerm = this.value.toLowerCase();
             const rows = document.querySelectorAll('#productsTable tbody tr');
 
@@ -490,4 +506,5 @@
         });
     </script>
 </body>
+
 </html>

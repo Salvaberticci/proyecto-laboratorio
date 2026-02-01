@@ -3,7 +3,6 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-11-2025 a las 14:50:33
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -18,64 +17,64 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `cine`
+-- Base de datos: `laboratorio`
 --
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `categorias`
+-- Estructura de tabla para la tabla `categorias_experimentos`
 --
 
-CREATE TABLE `categorias` (
+CREATE TABLE `categorias_experimentos` (
   `id_categoria` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `categorias`
+-- Volcado de datos para la tabla `categorias_experimentos`
 --
 
-INSERT INTO `categorias` (`id_categoria`, `nombre`) VALUES
-(1, 'Acción'),
-(2, 'Ciencia Ficción'),
-(3, 'Drama'),
-(4, 'Comedia'),
-(5, 'Aventura');
+INSERT INTO `categorias_experimentos` (`id_categoria`, `nombre`) VALUES
+(1, 'Química'),
+(2, 'Biología'),
+(3, 'Física'),
+(4, 'Microbiología'),
+(5, 'Análisis Clínicos');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `funciones`
+-- Estructura de tabla para la tabla `pruebas`
 --
 
-CREATE TABLE `funciones` (
-  `id_funcion` int(11) NOT NULL,
-  `id_pelicula` int(11) DEFAULT NULL,
-  `id_sala` int(11) DEFAULT NULL,
-  `fecha_hora` datetime DEFAULT NULL
+CREATE TABLE `pruebas` (
+  `id_prueba` int(11) NOT NULL,
+  `id_experimento` int(11) DEFAULT NULL,
+  `id_laboratorio` int(11) DEFAULT NULL,
+  `fecha_hora_inicio` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `funciones`
+-- Volcado de datos para la tabla `pruebas`
 --
 
-INSERT INTO `funciones` (`id_funcion`, `id_pelicula`, `id_sala`, `fecha_hora`) VALUES
-(1, 1, 1, '2023-10-01 18:00:00'),
-(2, 1, 2, '2023-10-02 20:00:00'),
-(3, 2, 3, '2023-10-03 19:30:00'),
-(4, 3, 4, '2023-10-04 17:00:00'),
-(5, 4, 1, '2023-10-05 21:00:00'),
-(6, 5, 2, '2023-10-06 15:00:00'),
-(7, 6, 3, '2023-10-07 19:00:00'),
-(8, 7, 4, '2023-10-08 18:30:00'),
-(9, 8, 1, '2023-10-09 20:00:00'),
-(10, 1, 3, '2023-10-10 19:00:00'),
-(11, 2, 4, '2023-10-11 17:30:00'),
-(12, 1, 2, '2025-08-14 19:52:00'),
-(13, 1, 1, '2025-08-04 17:27:00'),
-(14, 2, 2, '2025-08-15 17:29:00'),
-(15, 2, 2, '2025-08-17 18:37:00');
+INSERT INTO `pruebas` (`id_prueba`, `id_experimento`, `id_laboratorio`, `fecha_hora_inicio`) VALUES
+(1, 1, 1, '2023-10-01 09:00:00'),
+(2, 1, 2, '2023-10-02 10:00:00'),
+(3, 2, 3, '2023-10-03 11:30:00'),
+(4, 3, 4, '2023-10-04 08:00:00'),
+(5, 4, 1, '2023-10-05 14:00:00'),
+(6, 5, 2, '2023-10-06 08:00:00'),
+(7, 6, 3, '2023-10-07 09:00:00'),
+(8, 7, 4, '2023-10-08 10:30:00'),
+(9, 8, 1, '2023-10-09 13:00:00'),
+(10, 1, 3, '2023-10-10 09:00:00'),
+(11, 2, 4, '2023-10-11 10:30:00'),
+(12, 1, 2, '2025-08-14 09:52:00'),
+(13, 1, 1, '2025-08-04 08:27:00'),
+(14, 2, 2, '2025-08-15 10:29:00'),
+(15, 2, 2, '2025-08-17 11:37:00');
 
 -- --------------------------------------------------------
 
@@ -100,21 +99,21 @@ INSERT INTO `metodos_pago` (`id_metodo`, `nombre`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `pedidos`
+-- Estructura de tabla para la tabla `solicitudes`
 --
 
-CREATE TABLE `pedidos` (
+CREATE TABLE `solicitudes` (
   `id` int(11) NOT NULL,
-  `producto_id` int(11) NOT NULL,
+  `reactivo_id` int(11) NOT NULL,
   `cantidad` int(11) NOT NULL,
-  `fecha_pedido` date DEFAULT curdate()
+  `fecha_solicitud` date DEFAULT curdate()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `pedidos`
+-- Volcado de datos para la tabla `solicitudes`
 --
 
-INSERT INTO `pedidos` (`id`, `producto_id`, `cantidad`, `fecha_pedido`) VALUES
+INSERT INTO `solicitudes` (`id`, `reactivo_id`, `cantidad`, `fecha_solicitud`) VALUES
 (1, 1, 2, '2025-10-22'),
 (2, 2, 1, '2025-10-22'),
 (3, 3, 3, '2025-10-22');
@@ -122,47 +121,47 @@ INSERT INTO `pedidos` (`id`, `producto_id`, `cantidad`, `fecha_pedido`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `peliculas`
+-- Estructura de tabla para la tabla `experimentos`
 --
 
-CREATE TABLE `peliculas` (
-  `id_pelicula` int(11) NOT NULL,
-  `titulo` varchar(255) NOT NULL,
-  `anio` int(11) DEFAULT NULL,
-  `duracion` int(11) DEFAULT NULL
+CREATE TABLE `experimentos` (
+  `id_experimento` int(11) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  `fecha_creacion` int(11) DEFAULT NULL,
+  `duracion_estimada` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `peliculas`
+-- Volcado de datos para la tabla `experimentos`
 --
 
-INSERT INTO `peliculas` (`id_pelicula`, `titulo`, `anio`, `duracion`) VALUES
-(1, 'Avengers: Endgame', 2019, 181),
-(2, 'Interstellar', 2014, 169),
-(3, 'The Shawshank Redemption', 1994, 142),
-(4, 'Deadpool', 2016, 108),
-(5, 'Jurassic Park', 1993, 127),
-(6, 'Inception', 2010, 148),
-(7, 'The Matrix', 1999, 136),
-(8, 'Forrest Gump', 1994, 142),
-(12, 'Batman', 2012, 185);
+INSERT INTO `experimentos` (`id_experimento`, `nombre`, `fecha_creacion`, `duracion_estimada`) VALUES
+(1, 'Análisis de pH en Soluciones', 2019, 120),
+(2, 'Cultivo de Bacterias', 2014, 180),
+(3, 'Medición de Densidad', 1994, 90),
+(4, 'Prueba de Toxicidad', 2016, 150),
+(5, 'Análisis de ADN', 1993, 240),
+(6, 'Cromatografía Líquida', 2010, 180),
+(7, 'Espectrofotometría', 1999, 120),
+(8, 'Análisis de Proteínas', 1994, 150),
+(12, 'Microscopia Electrónica', 2012, 200);
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `peliculas_categorias`
+-- Estructura de tabla para la tabla `experimentos_categorias`
 --
 
-CREATE TABLE `peliculas_categorias` (
-  `id_pelicula` int(11) NOT NULL,
+CREATE TABLE `experimentos_categorias` (
+  `id_experimento` int(11) NOT NULL,
   `id_categoria` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `peliculas_categorias`
+-- Volcado de datos para la tabla `experimentos_categorias`
 --
 
-INSERT INTO `peliculas_categorias` (`id_pelicula`, `id_categoria`) VALUES
+INSERT INTO `experimentos_categorias` (`id_experimento`, `id_categoria`) VALUES
 (1, 1),
 (1, 2),
 (2, 2),
@@ -182,10 +181,10 @@ INSERT INTO `peliculas_categorias` (`id_pelicula`, `id_categoria`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `productos`
+-- Estructura de tabla para la tabla `reactivos`
 --
 
-CREATE TABLE `productos` (
+CREATE TABLE `reactivos` (
   `id` int(11) NOT NULL,
   `nombre` varchar(255) NOT NULL,
   `descripcion` text DEFAULT NULL,
@@ -195,39 +194,39 @@ CREATE TABLE `productos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `productos`
+-- Volcado de datos para la tabla `reactivos`
 --
 
-INSERT INTO `productos` (`id`, `nombre`, `descripcion`, `precio`, `stock`, `fecha_creacion`) VALUES
-(1, 'Palomitas Grandes', 'Palomitas de maÝz saladas tama±o grande', 5.50, 100, '2025-10-22'),
-(2, 'Refresco Mediano', 'Bebida gaseosa mediana', 3.00, 150, '2025-10-22'),
-(3, 'Nachos', 'Nachos con queso y jalape±os', 7.00, 80, '2025-10-22');
+INSERT INTO `reactivos` (`id`, `nombre`, `descripcion`, `precio`, `stock`, `fecha_creacion`) VALUES
+(1, 'Ácido Clorhídrico 1L', 'Ácido clorhídrico concentrado para análisis', 15.50, 100, '2025-10-22'),
+(2, 'Placas Petri (Pack 50)', 'Placas de cultivo estériles', 25.00, 150, '2025-10-22'),
+(3, 'Pipetas Graduadas 10ml', 'Set de pipetas graduadas de vidrio', 18.00, 80, '2025-10-22');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `salas`
+-- Estructura de tabla para la tabla `laboratorios`
 --
 
-CREATE TABLE `salas` (
-  `id_sala` int(11) NOT NULL,
+CREATE TABLE `laboratorios` (
+  `id_laboratorio` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
-  `capacidad` int(11) NOT NULL
+  `capacidad_personas` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `salas`
+-- Volcado de datos para la tabla `laboratorios`
 --
 
-INSERT INTO `salas` (`id_sala`, `nombre`, `capacidad`) VALUES
-(1, 'Sala IMAX', 200),
-(2, 'Sala VIP', 100),
-(3, 'Sala 3D', 150),
-(4, 'Sala Estándar', 120),
-(5, 'Sala 2 ', 10),
-(6, 'Sala 2 ', 10),
-(7, 'Sala 4', 122),
-(8, 'Sala 5', 121);
+INSERT INTO `laboratorios` (`id_laboratorio`, `nombre`, `capacidad_personas`) VALUES
+(1, 'Laboratorio de Química', 20),
+(2, 'Laboratorio de Biología', 15),
+(3, 'Laboratorio de Física', 18),
+(4, 'Laboratorio de Microbiología', 12),
+(5, 'Laboratorio 2', 10),
+(6, 'Laboratorio 3', 10),
+(7, 'Laboratorio 4', 22),
+(8, 'Laboratorio 5', 21);
 
 -- --------------------------------------------------------
 
@@ -238,7 +237,7 @@ INSERT INTO `salas` (`id_sala`, `nombre`, `capacidad`) VALUES
 CREATE TABLE `tickets` (
   `id_ticket` int(11) NOT NULL,
   `id_venta` int(11) DEFAULT NULL,
-  `id_funcion` int(11) DEFAULT NULL,
+  `id_prueba` int(11) DEFAULT NULL,
   `asiento` varchar(10) DEFAULT NULL,
   `precio` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -247,7 +246,7 @@ CREATE TABLE `tickets` (
 -- Volcado de datos para la tabla `tickets`
 --
 
-INSERT INTO `tickets` (`id_ticket`, `id_venta`, `id_funcion`, `asiento`, `precio`) VALUES
+INSERT INTO `tickets` (`id_ticket`, `id_venta`, `id_prueba`, `asiento`, `precio`) VALUES
 (1, 1, 1, 'A1', 12.50),
 (2, 1, 1, 'A2', 12.50),
 (3, 1, 1, 'A3', 12.50),
@@ -313,9 +312,9 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `username`, `email`, `password_hash`, `role`, `activo`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 'admin', 'admin@cine.com', '$2b$10$IeyDE0DtGmqpSFl8r25.KesEvsH/C9OcxDOC90MzMfref6oykzeNq', 'admin', 1, '2025-11-12 14:08:40', '2025-11-12 14:08:40'),
-(2, 'usuario1', 'usuario1@cine.com', '$2b$10$IeyDE0DtGmqpSFl8r25.KesEvsH/C9OcxDOC90MzMfref6oykzeNq', 'user', 1, '2025-11-12 14:08:40', '2025-11-12 14:08:40'),
-(3, 'invitado', 'invitado@cine.com', '$2b$10$IeyDE0DtGmqpSFl8r25.KesEvsH/C9OcxDOC90MzMfref6oykzeNq', 'guest', 1, '2025-11-12 14:08:40', '2025-11-12 14:08:40'),
+(1, 'admin', 'admin@laboratorio.com', '$2b$10$IeyDE0DtGmqpSFl8r25.KesEvsH/C9OcxDOC90MzMfref6oykzeNq', 'admin', 1, '2025-11-12 14:08:40', '2025-11-12 14:08:40'),
+(2, 'usuario1', 'usuario1@laboratorio.com', '$2b$10$IeyDE0DtGmqpSFl8r25.KesEvsH/C9OcxDOC90MzMfref6oykzeNq', 'user', 1, '2025-11-12 14:08:40', '2025-11-12 14:08:40'),
+(3, 'invitado', 'invitado@laboratorio.com', '$2b$10$IeyDE0DtGmqpSFl8r25.KesEvsH/C9OcxDOC90MzMfref6oykzeNq', 'guest', 1, '2025-11-12 14:08:40', '2025-11-12 14:08:40'),
 (4, 'testuser', 'test@example.com', '$2b$10$bYbhnqHFTw.45hgfeKj.luxa7Q/bDS2MJs9k9kUWUb7mV2qQcqBpe', 'user', 1, '2025-11-12 14:57:04', '2025-11-12 14:57:04'),
 (5, 'prueba', 'prueba@gmail.com', '$2b$10$R136BsMPSb7opRZd9MzPfuZbR.5HaPpMY9ATQQP.OBjlcOi2aHAGa', 'user', 0, '2025-11-12 14:58:08', '2025-11-12 16:03:57');
 
@@ -337,35 +336,35 @@ CREATE TABLE `ventas` (
 --
 
 INSERT INTO `ventas` (`id_venta`, `id_metodo`, `fecha`, `total`) VALUES
-(1, 1, '2023-10-01 17:50:00', 50.00),
-(2, 2, '2023-10-02 19:45:00', 37.50),
-(3, 3, '2023-10-03 19:20:00', 25.00),
-(4, 1, '2023-10-04 16:50:00', 12.50),
-(5, 2, '2023-10-05 20:50:00', 75.00),
-(6, 3, '2023-10-06 14:45:00', 50.00),
-(7, 1, '2023-10-07 18:50:00', 62.50),
-(8, 2, '2023-10-08 18:20:00', 37.50),
-(9, 3, '2023-10-09 19:50:00', 25.00),
-(10, 1, '2023-10-10 18:45:00', 100.00),
-(11, 2, '2023-10-11 17:20:00', 50.00);
+(1, 1, '2023-10-01 09:50:00', 50.00),
+(2, 2, '2023-10-02 10:45:00', 37.50),
+(3, 3, '2023-10-03 11:20:00', 25.00),
+(4, 1, '2023-10-04 08:50:00', 12.50),
+(5, 2, '2023-10-05 14:50:00', 75.00),
+(6, 3, '2023-10-06 08:45:00', 50.00),
+(7, 1, '2023-10-07 09:50:00', 62.50),
+(8, 2, '2023-10-08 10:20:00', 37.50),
+(9, 3, '2023-10-09 13:50:00', 25.00),
+(10, 1, '2023-10-10 09:45:00', 100.00),
+(11, 2, '2023-10-11 10:20:00', 50.00);
 
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `categorias`
+-- Indices de la tabla `categorias_experimentos`
 --
-ALTER TABLE `categorias`
+ALTER TABLE `categorias_experimentos`
   ADD PRIMARY KEY (`id_categoria`);
 
 --
--- Indices de la tabla `funciones`
+-- Indices de la tabla `pruebas`
 --
-ALTER TABLE `funciones`
-  ADD PRIMARY KEY (`id_funcion`),
-  ADD KEY `id_pelicula` (`id_pelicula`),
-  ADD KEY `id_sala` (`id_sala`);
+ALTER TABLE `pruebas`
+  ADD PRIMARY KEY (`id_prueba`),
+  ADD KEY `id_experimento` (`id_experimento`),
+  ADD KEY `id_laboratorio` (`id_laboratorio`);
 
 --
 -- Indices de la tabla `metodos_pago`
@@ -374,36 +373,36 @@ ALTER TABLE `metodos_pago`
   ADD PRIMARY KEY (`id_metodo`);
 
 --
--- Indices de la tabla `pedidos`
+-- Indices de la tabla `solicitudes`
 --
-ALTER TABLE `pedidos`
+ALTER TABLE `solicitudes`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `producto_id` (`producto_id`);
+  ADD KEY `reactivo_id` (`reactivo_id`);
 
 --
--- Indices de la tabla `peliculas`
+-- Indices de la tabla `experimentos`
 --
-ALTER TABLE `peliculas`
-  ADD PRIMARY KEY (`id_pelicula`);
+ALTER TABLE `experimentos`
+  ADD PRIMARY KEY (`id_experimento`);
 
 --
--- Indices de la tabla `peliculas_categorias`
+-- Indices de la tabla `experimentos_categorias`
 --
-ALTER TABLE `peliculas_categorias`
-  ADD PRIMARY KEY (`id_pelicula`,`id_categoria`),
+ALTER TABLE `experimentos_categorias`
+  ADD PRIMARY KEY (`id_experimento`,`id_categoria`),
   ADD KEY `id_categoria` (`id_categoria`);
 
 --
--- Indices de la tabla `productos`
+-- Indices de la tabla `reactivos`
 --
-ALTER TABLE `productos`
+ALTER TABLE `reactivos`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `salas`
+-- Indices de la tabla `laboratorios`
 --
-ALTER TABLE `salas`
-  ADD PRIMARY KEY (`id_sala`);
+ALTER TABLE `laboratorios`
+  ADD PRIMARY KEY (`id_laboratorio`);
 
 --
 -- Indices de la tabla `tickets`
@@ -411,7 +410,7 @@ ALTER TABLE `salas`
 ALTER TABLE `tickets`
   ADD PRIMARY KEY (`id_ticket`),
   ADD KEY `id_venta` (`id_venta`),
-  ADD KEY `id_funcion` (`id_funcion`);
+  ADD KEY `id_prueba` (`id_prueba`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -433,16 +432,16 @@ ALTER TABLE `ventas`
 --
 
 --
--- AUTO_INCREMENT de la tabla `categorias`
+-- AUTO_INCREMENT de la tabla `categorias_experimentos`
 --
-ALTER TABLE `categorias`
+ALTER TABLE `categorias_experimentos`
   MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT de la tabla `funciones`
+-- AUTO_INCREMENT de la tabla `pruebas`
 --
-ALTER TABLE `funciones`
-  MODIFY `id_funcion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+ALTER TABLE `pruebas`
+  MODIFY `id_prueba` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `metodos_pago`
@@ -451,28 +450,28 @@ ALTER TABLE `metodos_pago`
   MODIFY `id_metodo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT de la tabla `pedidos`
+-- AUTO_INCREMENT de la tabla `solicitudes`
 --
-ALTER TABLE `pedidos`
+ALTER TABLE `solicitudes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT de la tabla `peliculas`
+-- AUTO_INCREMENT de la tabla `experimentos`
 --
-ALTER TABLE `peliculas`
-  MODIFY `id_pelicula` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+ALTER TABLE `experimentos`
+  MODIFY `id_experimento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT de la tabla `productos`
+-- AUTO_INCREMENT de la tabla `reactivos`
 --
-ALTER TABLE `productos`
+ALTER TABLE `reactivos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT de la tabla `salas`
+-- AUTO_INCREMENT de la tabla `laboratorios`
 --
-ALTER TABLE `salas`
-  MODIFY `id_sala` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+ALTER TABLE `laboratorios`
+  MODIFY `id_laboratorio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `tickets`
@@ -497,31 +496,31 @@ ALTER TABLE `ventas`
 --
 
 --
--- Filtros para la tabla `funciones`
+-- Filtros para la tabla `pruebas`
 --
-ALTER TABLE `funciones`
-  ADD CONSTRAINT `funciones_ibfk_1` FOREIGN KEY (`id_pelicula`) REFERENCES `peliculas` (`id_pelicula`),
-  ADD CONSTRAINT `funciones_ibfk_2` FOREIGN KEY (`id_sala`) REFERENCES `salas` (`id_sala`);
+ALTER TABLE `pruebas`
+  ADD CONSTRAINT `pruebas_ibfk_1` FOREIGN KEY (`id_experimento`) REFERENCES `experimentos` (`id_experimento`),
+  ADD CONSTRAINT `pruebas_ibfk_2` FOREIGN KEY (`id_laboratorio`) REFERENCES `laboratorios` (`id_laboratorio`);
 
 --
--- Filtros para la tabla `pedidos`
+-- Filtros para la tabla `solicitudes`
 --
-ALTER TABLE `pedidos`
-  ADD CONSTRAINT `pedidos_ibfk_1` FOREIGN KEY (`producto_id`) REFERENCES `productos` (`id`);
+ALTER TABLE `solicitudes`
+  ADD CONSTRAINT `solicitudes_ibfk_1` FOREIGN KEY (`reactivo_id`) REFERENCES `reactivos` (`id`);
 
 --
--- Filtros para la tabla `peliculas_categorias`
+-- Filtros para la tabla `experimentos_categorias`
 --
-ALTER TABLE `peliculas_categorias`
-  ADD CONSTRAINT `peliculas_categorias_ibfk_1` FOREIGN KEY (`id_pelicula`) REFERENCES `peliculas` (`id_pelicula`) ON DELETE CASCADE,
-  ADD CONSTRAINT `peliculas_categorias_ibfk_2` FOREIGN KEY (`id_categoria`) REFERENCES `categorias` (`id_categoria`);
+ALTER TABLE `experimentos_categorias`
+  ADD CONSTRAINT `experimentos_categorias_ibfk_1` FOREIGN KEY (`id_experimento`) REFERENCES `experimentos` (`id_experimento`) ON DELETE CASCADE,
+  ADD CONSTRAINT `experimentos_categorias_ibfk_2` FOREIGN KEY (`id_categoria`) REFERENCES `categorias_experimentos` (`id_categoria`);
 
 --
 -- Filtros para la tabla `tickets`
 --
 ALTER TABLE `tickets`
   ADD CONSTRAINT `tickets_ibfk_1` FOREIGN KEY (`id_venta`) REFERENCES `ventas` (`id_venta`),
-  ADD CONSTRAINT `tickets_ibfk_2` FOREIGN KEY (`id_funcion`) REFERENCES `funciones` (`id_funcion`);
+  ADD CONSTRAINT `tickets_ibfk_2` FOREIGN KEY (`id_prueba`) REFERENCES `pruebas` (`id_prueba`);
 
 --
 -- Filtros para la tabla `ventas`

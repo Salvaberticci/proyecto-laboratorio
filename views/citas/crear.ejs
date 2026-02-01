@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #5a6fd8, #6a4190);
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="text-center mb-4">
+            <h1 class="mb-2"><i class="fas fa-microscope text-primary me-2"></i>
+                <%= title %>
+            </h1>
+            <p class="text-muted">Programa una nueva prueba de laboratorio</p>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <% if (typeof error !=='undefined' && error) { %>
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <%= error %>
+                    </div>
+                    <% } %>
+
+                        <form action="/funciones" method="POST">
+                            <div class="mb-3">
+                                <label for="id_pelicula" class="form-label">
+                                    <i class="fas fa-film me-1"></i>Película *
+                                </label>
+                                <select class="form-select" id="id_pelicula" name="id_pelicula" required>
+                                    <option value="">Seleccione una película</option>
+                                    <% peliculas.forEach(function(pelicula) { %>
+                                        <option value="<%= pelicula.id_pelicula %>" <%=typeof funcion !=='undefined' &&
+                                            funcion.id_pelicula==pelicula.id_pelicula ? 'selected' : '' %>>
+                                            <%= pelicula.titulo %> (<%= pelicula.anio %>)
+                                        </option>
+                                        <% }); %>
+                                </select>
+                                <div class="form-text">Seleccione la película que se proyectará</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_sala" class="form-label">
+                                    <i class="fas fa-building me-1"></i>Sala *
+                                </label>
+                                <select class="form-select" id="id_sala" name="id_sala" required>
+                                    <option value="">Seleccione una sala</option>
+                                    <% salas.forEach(function(sala) { %>
+                                        <option value="<%= sala.id_sala %>" <%=typeof funcion !=='undefined' &&
+                                            funcion.id_sala==sala.id_sala ? 'selected' : '' %>>
+                                            <%= sala.nombre %> (Capacidad: <%= sala.capacidad %>)
+                                        </option>
+                                        <% }); %>
+                                </select>
+                                <div class="form-text">Seleccione la sala donde se realizará la función</div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="fecha_hora" class="form-label">
+                                    <i class="fas fa-clock me-1"></i>Fecha y Hora *
+                                </label>
+                                <input type="datetime-local" class="form-control" id="fecha_hora" name="fecha_hora"
+                                    value="<%= typeof funcion !== 'undefined' && funcion.fecha_hora ? new Date(funcion.fecha_hora).toISOString().slice(0, 16) : '' %>"
+                                    min="<%= new Date().toISOString().slice(0, 16) %>" required>
+                                <div class="form-text">Seleccione la fecha y hora de la función</div>
+                            </div>
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="/funciones" class="btn btn-outline-secondary me-md-2">
+                                    <i class="fas fa-times me-1"></i>Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-calendar-check me-1"></i>Programar Función
+                                </button>
+                            </div>
+                        </form>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <small class="text-muted">* Campos obligatorios</small>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-focus on first select
+        document.addEventListener('DOMContentLoaded', function () {
+            const peliculaSelect = document.getElementById('id_pelicula');
+            if (!peliculaSelect.value) {
+                peliculaSelect.focus();
+            }
+        });
+    </script>
+</body>
+
+</html>

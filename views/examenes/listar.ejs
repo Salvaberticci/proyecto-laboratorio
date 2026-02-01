@@ -50,11 +50,11 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h1 class="mb-0"><i class="fas fa-film text-primary me-2"></i><%= title %></h1>
-                <p class="text-muted mb-0">Gestión completa de películas del cine</p>
+                <h1 class="mb-0"><i class="fas fa-flask text-primary me-2"></i><%= title %></h1>
+                <p class="text-muted mb-0">Gestión completa de experimentos del laboratorio</p>
             </div>
-            <a href="/peliculas/crear" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>Agregar Película
+            <a href="/examenes/crear" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Agregar Experimento
             </a>
         </div>
 
@@ -77,33 +77,33 @@
 
         <div class="card">
             <div class="card-body">
-                <% if (peliculas && peliculas.length > 0) { %>
+                <% if (experimentos && experimentos.length > 0) { %>
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
                                     <th><i class="fas fa-hashtag me-1"></i>ID</th>
-                                    <th><i class="fas fa-film me-1"></i>Título</th>
-                                    <th><i class="fas fa-calendar me-1"></i>Año</th>
-                                    <th><i class="fas fa-clock me-1"></i>Duración (min)</th>
+                                    <th><i class="fas fa-flask me-1"></i>Nombre</th>
+                                    <th><i class="fas fa-calendar me-1"></i>Fecha Creación</th>
+                                    <th><i class="fas fa-clock me-1"></i>Duración Est. (min)</th>
                                     <th><i class="fas fa-cogs me-1"></i>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <% peliculas.forEach(function(pelicula) { %>
+                                <% experimentos.forEach(function(experimento) { %>
                                     <tr>
-                                        <td><%= pelicula.id_pelicula %></td>
+                                        <td><%= experimento.id_experimento %></td>
                                         <td>
-                                            <strong><%= pelicula.titulo %></strong>
+                                            <strong><%= experimento.nombre %></strong>
                                         </td>
-                                        <td><%= pelicula.anio %></td>
-                                        <td><%= pelicula.duracion %> min</td>
+                                        <td><%= experimento.fecha_creacion %></td>
+                                        <td><%= experimento.duracion_estimada %> min</td>
                                         <td>
-                                            <a href="/peliculas/<%= pelicula.id_pelicula %>/editar" class="btn btn-warning btn-sm me-1">
+                                            <a href="/examenes/<%= experimento.id_experimento %>/editar" class="btn btn-warning btn-sm me-1">
                                                 <i class="fas fa-edit"></i> Editar
                                             </a>
-                                            <form method="POST" action="/peliculas/<%= pelicula.id_pelicula %>?_method=DELETE" style="display: inline;">
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmarEliminar('<%= pelicula.titulo %>', this.form)">
+                                            <form method="POST" action="/examenes/<%= experimento.id_experimento %>?_method=DELETE" style="display: inline;">
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmarEliminar('<%= experimento.nombre %>', this.form)">
                                                     <i class="fas fa-trash"></i> Eliminar
                                                 </button>
                                             </form>
@@ -115,11 +115,11 @@
                     </div>
                 <% } else { %>
                     <div class="text-center py-5">
-                        <i class="fas fa-film fa-4x text-muted mb-3"></i>
-                        <h4 class="text-muted">No hay películas registradas</h4>
-                        <p class="text-muted">Comienza agregando tu primera película al sistema.</p>
-                        <a href="/peliculas/crear" class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i>Agregar Primera Película
+                        <i class="fas fa-flask fa-4x text-muted mb-3"></i>
+                        <h4 class="text-muted">No hay experimentos registrados</h4>
+                        <p class="text-muted">Comienza agregando tu primer experimento al sistema.</p>
+                        <a href="/examenes/crear" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Agregar Primer Experimento
                         </a>
                     </div>
                 <% } %>
@@ -137,7 +137,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function confirmarEliminar(nombre, form) {
-            if (confirm('¿Estás seguro de que deseas eliminar la película "' + nombre + '"?\n\nEsta acción no se puede deshacer.')) {
+            if (confirm('¿Estás seguro de que deseas eliminar el experimento "' + nombre + '"?\\n\\nEsta acción no se puede deshacer.')) {
                 form.submit();
             }
         }

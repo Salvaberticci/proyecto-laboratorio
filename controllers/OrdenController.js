@@ -4,10 +4,10 @@
 
 const dbService = require('../database/DBService');
 
-class PedidoController {
+class OrdenController {
   // ========== MÉTODOS PARA RUTAS API (Retornan JSON) ==========
 
-  // GET /api/pedidos/ultimos - Muestra los últimos 5 pedidos ordenados por fecha
+  // GET /api/ordenes/ultimos - Muestra los últimos 5 pedidos ordenados por fecha
   async apiUltimos(req, res) {
     try {
       const pedidos = await dbService.getUltimosPedidos();
@@ -18,6 +18,34 @@ class PedidoController {
       });
     } catch (error) {
       console.error('Error en apiUltimos pedidos:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Error interno del servidor',
+        error: error.message
+      });
+    }
+  }
+
+  // GET /api/ordenes/rango-fechas - Filtra pedidos por rango de fechas
+  async apiFiltrarPorFecha(req, res) {
+    try {
+      const { inicio, fin } = req.query;
+
+      if (!inicio || !fin) {
+        return res.status(400).json({
+          success: false,
+          message: 'Se requieren parámetros inicio y fin (YYYY-MM-DD)'
+        });
+      }
+
+      const pedidos = await dbService.getPedidosByDateRange(inicio, fin);
+      res.json({
+        success: true,
+        data: pedidos,
+        count: pedidos.length
+      });
+    } catch (error) {
+      console.error('Error en apiFiltrarPorFecha:', error);
       res.status(500).json({
         success: false,
         message: 'Error interno del servidor',
@@ -202,15 +230,15 @@ class PedidoController {
   async listar(req, res) {
     try {
       const pedidos = await dbService.getAllPedidos();
-      // Obtener productos para mostrar nombres en lugar de IDs
-      const productos = await dbService.getAllProductos();
-      const productosMap = productos.reduce((map, producto) => {
-        map[producto.id] = producto.nombre;
+      // Obtener reactivos para mostrar nombres en lugar de IDs
+      const reactivos = await dbService.getAllReactivos();
+      const productosMap = reactivos.reduce((map, reactivo) => {
+        map[reactivo.id] = reactivo.nombre;
         return map;
       }, {});
 
-      res.render('pedidos/listar', {
-        title: 'Lista de Pedidos',
+      res.render('ordenes/listar', {
+        title: 'Lista de Órdenes',
         pedidos: pedidos,
         productosMap: productosMap
       });
@@ -227,9 +255,9 @@ class PedidoController {
   // GET /pedidos/crear - Formulario de creación de pedido
   async crearForm(req, res) {
     try {
-      const productos = await dbService.getAllProductos();
-      res.render('pedidos/crear', {
-        title: 'Crear Pedido',
+      const productos = await dbService.getAllReactivos();
+      res.render('ordenes/crear', {
+        title: 'Crear Orden',
         productos: productos
       });
     } catch (error) {
@@ -249,9 +277,9 @@ class PedidoController {
 
       // Validación básica
       if (!producto_id || !cantidad) {
-        const productos = await dbService.getAllProductos();
-        return res.render('pedidos/crear', {
-          title: 'Crear Pedido',
+        const productos = await dbService.getAllReactivos();
+        return res.render('ordenes/crear', {
+          title: 'Crear Orden',
           error: 'Los campos producto y cantidad son requeridos',
           productos: productos,
           pedido: req.body
@@ -259,9 +287,9 @@ class PedidoController {
       }
 
       if (cantidad <= 0) {
-        const productos = await dbService.getAllProductos();
-        return res.render('pedidos/crear', {
-          title: 'Crear Pedido',
+        const productos = await dbService.getAllReactivos();
+        return res.render('ordenes/crear', {
+          title: 'Crear Orden',
           error: 'La cantidad debe ser un número positivo',
           productos: productos,
           pedido: req.body
@@ -273,14 +301,14 @@ class PedidoController {
         cantidad
       });
 
-      res.redirect('/pedidos');
+      res.redirect('/ordenes');
     } catch (error) {
       console.error('Error en crear pedido:', error);
       try {
-        const productos = await dbService.getAllProductos();
-        res.render('pedidos/crear', {
-          title: 'Crear Pedido',
-          error: 'Error al crear el pedido: ' + error.message,
+        const productos = await dbService.getAllReactivos();
+        res.render('ordenes/crear', {
+          title: 'Crear Orden',
+          error: 'Error al crear la orden: ' + error.message,
           productos: productos,
           pedido: req.body
         });
@@ -295,4 +323,4 @@ class PedidoController {
   }
 }
 
-module.exports = new PedidoController();
+module.exports = new OrdenController();

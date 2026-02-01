@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -27,7 +30,7 @@
             width: 100%;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             backdrop-filter: blur(10px);
         }
@@ -92,6 +95,7 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -200,7 +204,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -277,107 +281,112 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-plus-circle"></i> <%= title %></h1>
-            <div class="subtitle">Agrega un nuevo producto al inventario</div>
+            <h1><i class="fas fa-plus-circle"></i>
+                <%= title %>
+            </h1>
+            <div class="subtitle">Agrega un nuevo reactivo al inventario</div>
         </div>
 
         <div class="content">
             <div class="progress-indicator">
                 <div class="step">
-                    <i class="fas fa-cube"></i>
-                    Información del Producto
+                    <i class="fas fa-flask"></i>
+                    Información del Reactivo
                 </div>
             </div>
 
-            <% if (typeof error !== 'undefined' && error) { %>
+            <% if (typeof error !=='undefined' && error) { %>
                 <div class="alert">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <span><%= error %></span>
+                    <span>
+                        <%= error %>
+                    </span>
                 </div>
-            <% } %>
+                <% } %>
 
-            <form action="/productos" method="POST" id="productForm">
-                <div class="form-group">
-                    <label for="nombre">
-                        <i class="fas fa-tag"></i> Nombre del Producto *
-                    </label>
-                    <div class="input-wrapper">
-                        <input type="text" id="nombre" name="nombre" required
-                               value="<%= typeof producto !== 'undefined' ? producto.nombre || '' : '' %>"
-                               placeholder="Ej: Palomitas Grandes, Refresco Mediano">
-                        <i class="fas fa-cube input-icon"></i>
-                    </div>
-                    <div class="input-hint">
-                        <i class="fas fa-info-circle"></i>
-                        Nombre descriptivo del producto
-                    </div>
-                </div>
+                    <form action="/insumos" method="POST" id="productForm">
+                        <div class="form-group">
+                            <label for="nombre">
+                                <i class="fas fa-tag"></i> Nombre del Reactivo *
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="text" id="nombre" name="nombre" required
+                                    value="<%= typeof reactivo !== 'undefined' ? reactivo.nombre || '' : '' %>"
+                                    placeholder="Ej: Reactivo A, Solución B">
+                                <i class="fas fa-flask input-icon"></i>
+                            </div>
+                            <div class="input-hint">
+                                <i class="fas fa-info-circle"></i>
+                                Nombre descriptivo del reactivo
+                            </div>
+                        </div>
 
-                <div class="form-group">
-                    <label for="descripcion">
-                        <i class="fas fa-align-left"></i> Descripción *
-                    </label>
-                    <div class="input-wrapper">
-                        <textarea id="descripcion" name="descripcion" required
-                                  placeholder="Describe las características del producto..."><%= typeof producto !== 'undefined' ? producto.descripcion || '' : '' %></textarea>
-                        <i class="fas fa-comment input-icon" style="top: 20px;"></i>
-                    </div>
-                    <div class="input-hint">
-                        <i class="fas fa-info-circle"></i>
-                        Detalles importantes del producto
-                    </div>
-                </div>
+                        <div class="form-group">
+                            <label for="descripcion">
+                                <i class="fas fa-align-left"></i> Descripción *
+                            </label>
+                            <div class="input-wrapper">
+                                <textarea id="descripcion" name="descripcion" required
+                                    placeholder="Describe las características del reactivo..."><%= typeof reactivo !== 'undefined' ? reactivo.descripcion || '' : '' %></textarea>
+                                <i class="fas fa-comment input-icon" style="top: 20px;"></i>
+                            </div>
+                            <div class="input-hint">
+                                <i class="fas fa-info-circle"></i>
+                                Detalles importantes del reactivo
+                            </div>
+                        </div>
 
-                <div class="form-group">
-                    <label for="precio">
-                        <i class="fas fa-dollar-sign"></i> Precio ($) *
-                    </label>
-                    <div class="input-wrapper">
-                        <input type="number" id="precio" name="precio" step="0.01" min="0" required
-                               value="<%= typeof producto !== 'undefined' ? producto.precio || '' : '' %>"
-                               placeholder="0.00">
-                        <i class="fas fa-dollar-sign input-icon"></i>
-                    </div>
-                    <div class="input-hint">
-                        <i class="fas fa-info-circle"></i>
-                        Precio unitario en dólares
-                    </div>
-                </div>
+                        <div class="form-group">
+                            <label for="precio">
+                                <i class="fas fa-dollar-sign"></i> Precio ($) *
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="number" id="precio" name="precio" step="0.01" min="0" required
+                                    value="<%= typeof reactivo !== 'undefined' ? reactivo.precio || '' : '' %>"
+                                    placeholder="0.00">
+                                <i class="fas fa-dollar-sign input-icon"></i>
+                            </div>
+                            <div class="input-hint">
+                                <i class="fas fa-info-circle"></i>
+                                Precio unitario en dólares
+                            </div>
+                        </div>
 
-                <div class="form-group">
-                    <label for="stock">
-                        <i class="fas fa-boxes"></i> Stock Inicial *
-                    </label>
-                    <div class="input-wrapper">
-                        <input type="number" id="stock" name="stock" min="0" required
-                               value="<%= typeof producto !== 'undefined' ? producto.stock || '' : '' %>"
-                               placeholder="0">
-                        <i class="fas fa-hashtag input-icon"></i>
-                    </div>
-                    <div class="input-hint">
-                        <i class="fas fa-info-circle"></i>
-                        Cantidad inicial en inventario
-                    </div>
-                </div>
+                        <div class="form-group">
+                            <label for="stock">
+                                <i class="fas fa-boxes"></i> Stock Inicial *
+                            </label>
+                            <div class="input-wrapper">
+                                <input type="number" id="stock" name="stock" min="0" required
+                                    value="<%= typeof reactivo !== 'undefined' ? reactivo.stock || '' : '' %>"
+                                    placeholder="0">
+                                <i class="fas fa-hashtag input-icon"></i>
+                            </div>
+                            <div class="input-hint">
+                                <i class="fas fa-info-circle"></i>
+                                Cantidad inicial en inventario
+                            </div>
+                        </div>
 
-                <div class="actions">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Crear Producto
-                    </button>
-                    <a href="/productos" class="btn btn-secondary">
-                        <i class="fas fa-times"></i> Cancelar
-                    </a>
-                </div>
-            </form>
+                        <div class="actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Crear Reactivo
+                            </button>
+                            <a href="/insumos" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
         </div>
     </div>
 
     <script>
         // Validación en tiempo real
-        document.getElementById('productForm').addEventListener('submit', function(e) {
+        document.getElementById('productForm').addEventListener('submit', function (e) {
             const precio = parseFloat(document.getElementById('precio').value);
             const stock = parseInt(document.getElementById('stock').value);
 
@@ -396,14 +405,15 @@
 
         // Efectos visuales en los inputs
         document.querySelectorAll('input, textarea').forEach(input => {
-            input.addEventListener('focus', function() {
+            input.addEventListener('focus', function () {
                 this.parentElement.style.transform = 'scale(1.02)';
             });
 
-            input.addEventListener('blur', function() {
+            input.addEventListener('blur', function () {
                 this.parentElement.style.transform = 'scale(1)';
             });
         });
     </script>
 </body>
+
 </html>
