@@ -109,11 +109,11 @@
             display: block;
         }
 
-        .productos-card .card-icon {
+        .reactivos-card .card-icon {
             color: #e74c3c;
         }
 
-        .pedidos-card .card-icon {
+        .ordenes-card .card-icon {
             color: #f39c12;
         }
 
@@ -291,7 +291,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-film"></i>
+            <h1><i class="fas fa-microscope"></i>
                 <%= title %>
             </h1>
             <p>
@@ -301,33 +301,33 @@
 
         <div class="main-content">
             <div class="dashboard-grid">
-                <div class="card productos-card">
-                    <i class="fas fa-box-open card-icon"></i>
-                    <h2>Gestión de Productos</h2>
+                <div class="card reactivos-card">
+                    <i class="fas fa-vial card-icon"></i>
+                    <h2>Gestión de Reactivos</h2>
                     <div class="action-buttons">
-                        <a href="/productos" class="btn btn-primary">
-                            <i class="fas fa-list"></i> Ver Productos
+                        <a href="/insumos" class="btn btn-primary">
+                            <i class="fas fa-list"></i> Ver Reactivos
                         </a>
-                        <a href="/productos/crear" class="btn btn-success">
-                            <i class="fas fa-plus"></i> Crear Producto
+                        <a href="/insumos/crear" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Crear Reactivo
                         </a>
                     </div>
                     <div class="api-section">
                         <h3><i class="fas fa-code"></i> API Endpoints</h3>
                         <div class="api-buttons">
-                            <a href="/api/productos" target="_blank" class="btn btn-api">
-                                GET /api/productos
+                            <a href="/api/insumos" target="_blank" class="btn btn-api">
+                                GET /api/insumos
                             </a>
-                            <a href="/api/productos/1" target="_blank" class="btn btn-api">
-                                GET /api/productos/:id
+                            <a href="/api/insumos/1" target="_blank" class="btn btn-api">
+                                GET /api/insumos/:id
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <div class="card pedidos-card">
-                    <i class="fas fa-shopping-cart card-icon"></i>
-                    <h2>Gestión de Pedidos</h2>
+                <div class="card ordenes-card">
+                    <i class="fas fa-clipboard-list card-icon"></i>
+                    <h2>Gestión de Órdenes</h2>
                     <div class="action-buttons">
                         <a href="/ordenes" class="btn btn-primary">
                             <i class="fas fa-list"></i> Ver Órdenes
@@ -350,7 +350,7 @@
                 </div>
 
                 <div class="card sistema-card">
-                    <i class="fas fa-cogs card-icon"></i>
+                    <i class="fas fa-laptop-medical card-icon"></i>
                     <h2>Información del Sistema</h2>
                     <div class="system-info">
                         <h3><i class="fas fa-info-circle"></i> Arquitectura Técnica</h3>
@@ -359,12 +359,18 @@
                                 Intereses (SoC)</li>
                             <li><i class="fas fa-code"></i><strong>Controladores:</strong> Clases ES6 con async/await
                             </li>
-                            <li><i class="fas fa-database"></i><strong>Base de Datos:</strong> Simulada con Promesas
+                            <li><i class="fas fa-database"></i><strong>Base de Datos:</strong> In-Memory (Requirement
+                                Phase 1)
                             </li>
                             <li><i class="fas fa-eye"></i><strong>Vistas:</strong> EJS templates modernos</li>
                             <li><i class="fas fa-globe"></i><strong>API:</strong> RESTful con respuestas JSON</li>
                             <li><i class="fas fa-server"></i><strong>Servidor:</strong> Node.js + Express</li>
                         </ul>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <a href="/login" class="btn btn-primary w-100">
+                            <i class="fas fa-sign-in-alt me-2"></i>Ir al Dashboard
+                        </a>
                     </div>
                 </div>
             </div>

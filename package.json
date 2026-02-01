@@ -1,7 +1,7 @@
 {
-  "name": "proyecto-cine-glorimar",
+  "name": "proyecto-laboratorio-glorimar",
   "version": "1.0.0",
-  "description": "Sistema de Gestión de Cines con CRUD de Productos y Pedidos",
+  "description": "Sistema de Gestión de Laboratorio Clínico con CRUD de Reactivos, Órdenes y Citas",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -21,7 +21,7 @@
     "nodemon": "^3.0.1"
   },
   "keywords": [
-    "cine",
+    "laboratorio",
     "gestion",
     "node",
     "express",

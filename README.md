@@ -22,8 +22,11 @@
 ### 🎯 Funcionalidad Principal
 - **🧪 Gestión de Inventario (Reactivos)**: CRUD completo para administrar reactivos, precios y stock.
 - **📋 Gestión de Órdenes (Pedidos)**: Creación y seguimiento de pedidos de insumos.
+- **🏢 Gestión de Áreas (Laboratorios)**: Administración de salas y capacidades físicas.
+- **💳 Gestión de Pagos**: Configuración de métodos de pago aceptados.
 - **🔐 Gestión de Usuarios**: Sistema de autenticación y roles (Admin/User).
-- **📅 Filtrado por Fechas**: Reportes de órdenes por rangos de fecha específicos.
+- **📅 Gestión de Citas**: Programación de experimentos en laboratorios específicos.
+- **📊 Reportes**: Filtrado de órdenes por rangos de fecha específicos.
 - **⚡ In-Memory Data**: Versión académica optimizada para funcionar sin base de datos externa (persistencia en memoria).
 
 ### 🎨 Experiencia de Usuario
@@ -172,12 +175,14 @@ Para las peticiones protegidas (rutas `/api/...`):
 ## 🎨 Vistas del Sistema
 
 El sistema cuenta con más de 5 vistas dinámicas desarrolladas con EJS:
-1. **Dashboard**: Resumen de actividad.
-2. **Listado de Insumos**: Tabla con inventario actual.
-3. **Detalle de Insumo**: Vista de edición y detalles.
-4. **Listado de Órdenes**: Historial de pedidos.
-5. **Crear Orden**: Formulario transaccional con validación.
-6. **Login**: Acceso seguro al sistema.
+1. **Dashboard**: Resumen de actividad y navegación centralizada.
+2. **Listado de Insumos**: Tabla con inventario actual de reactivos.
+3. **Gestión de Experimentos**: Catálogo de pruebas de laboratorio.
+4. **Programación de Citas**: Calendario de pruebas en salas.
+5. **Gestión de Áreas**: Administración de laboratorios físicos.
+6. **Métodos de Pago**: Configuración para facturación.
+7. **Historial de Órdenes**: Seguimiento de pedidos de reactivos.
+8. **Login**: Acceso seguro al sistema.
 
 ## 📄 Licencia
 

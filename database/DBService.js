@@ -26,9 +26,15 @@ class DBService {
     ];
     this.pruebas = [];
     this.laboratorios = [
-      { id_laboratorio: 1, nombre: 'Laboratorio de Química', ubicacion: 'Edificio A' },
-      { id_laboratorio: 2, nombre: 'Laboratorio de Biología', ubicacion: 'Edificio B' },
-      { id_laboratorio: 3, nombre: 'Laboratorio de Física', ubicacion: 'Edificio C' }
+      { id: 1, id_laboratorio: 1, nombre: 'Laboratorio de Química', ubicacion: 'Edificio A', capacidad_personas: 30 },
+      { id: 2, id_laboratorio: 2, nombre: 'Laboratorio de Biología', ubicacion: 'Edificio B', capacidad_personas: 25 },
+      { id: 3, id_laboratorio: 3, nombre: 'Laboratorio de Física', ubicacion: 'Edificio C', capacidad_personas: 20 }
+    ];
+
+    this.metodosPago = [
+      { id: 1, id_metodo: 1, nombre: 'Efectivo', activo: 1 },
+      { id: 2, id_metodo: 2, nombre: 'Tarjeta de Crédito', activo: 1 },
+      { id: 3, id_metodo: 3, nombre: 'Transferencia', activo: 1 }
     ];
 
     // Contadores para IDs automáticos
@@ -36,6 +42,8 @@ class DBService {
     this.nextPedidoId = 1;
     this.nextExperimentoId = 3;
     this.nextPruebaId = 1;
+    this.nextLaboratorioId = 4;
+    this.nextMetodoPagoId = 4;
 
     console.log('BASE DE DATOS EN MEMORIA INICIALIZADA (Sin MySQL)');
   }
@@ -383,11 +391,106 @@ class DBService {
   }
 
 
-  // ========== MÉTODOS PARA LABORATORIOS ==========
+  // ========== MÉTODOS CRUD PARA LABORATORIOS (Areas) ==========
 
   async getAllLaboratorios() {
     await this._delay();
-    return [...this.laboratorios];
+    return [...this.laboratorios].sort((a, b) => b.id_laboratorio - a.id_laboratorio);
+  }
+
+  async getLaboratorioById(id) {
+    await this._delay();
+    const lab = this.laboratorios.find(l => l.id === parseInt(id) || l.id_laboratorio === parseInt(id));
+    if (!lab) throw new Error('Laboratorio no encontrado');
+    return lab;
+  }
+
+  async createLaboratorio(data) {
+    await this._delay();
+    const newLab = {
+      id_laboratorio: this.nextLaboratorioId++,
+      nombre: data.nombre,
+      capacidad_personas: parseInt(data.capacidad_personas || 20), // Default capacity
+      ubicacion: data.ubicacion || 'Sin asignar'
+    };
+    // Add alias 'id' for compatibility
+    newLab.id = newLab.id_laboratorio;
+
+    this.laboratorios.push(newLab);
+    return newLab;
+  }
+
+  async updateLaboratorio(id, data) {
+    await this._delay();
+    const index = this.laboratorios.findIndex(l => l.id === parseInt(id) || l.id_laboratorio === parseInt(id));
+    if (index === -1) throw new Error('Laboratorio no encontrado');
+
+    this.laboratorios[index] = {
+      ...this.laboratorios[index],
+      nombre: data.nombre,
+      capacidad_personas: parseInt(data.capacidad_personas || this.laboratorios[index].capacidad_personas),
+      ubicacion: data.ubicacion || this.laboratorios[index].ubicacion
+    };
+    return this.laboratorios[index];
+  }
+
+  async deleteLaboratorio(id) {
+    await this._delay();
+    const index = this.laboratorios.findIndex(l => l.id === parseInt(id) || l.id_laboratorio === parseInt(id));
+    if (index === -1) throw new Error('Laboratorio no encontrado');
+
+    const deleted = this.laboratorios.splice(index, 1)[0];
+    return deleted;
+  }
+
+
+  // ========== MÉTODOS CRUD PARA MÉTODOS DE PAGO ==========
+
+  async getAllMetodosPago() {
+    await this._delay();
+    return [...this.metodosPago].sort((a, b) => b.id - a.id);
+  }
+
+  async getMetodoPagoById(id) {
+    await this._delay();
+    const metodo = this.metodosPago.find(m => m.id === parseInt(id));
+    if (!metodo) throw new Error('Método de pago no encontrado');
+    return metodo;
+  }
+
+  async createMetodoPago(data) {
+    await this._delay();
+    const newMetodo = {
+      id: this.nextMetodoPagoId++,
+      nombre: data.nombre,
+      activo: 1
+    };
+    // Alias id_metodo for compatibility if view uses it
+    newMetodo.id_metodo = newMetodo.id;
+
+    this.metodosPago.push(newMetodo);
+    return newMetodo;
+  }
+
+  async updateMetodoPago(id, data) {
+    await this._delay();
+    const index = this.metodosPago.findIndex(m => m.id === parseInt(id));
+    if (index === -1) throw new Error('Método de pago no encontrado');
+
+    this.metodosPago[index] = {
+      ...this.metodosPago[index],
+      nombre: data.nombre
+    };
+    return this.metodosPago[index];
+  }
+
+  async deleteMetodoPago(id) {
+    await this._delay();
+    const index = this.metodosPago.findIndex(m => m.id === parseInt(id));
+    if (index === -1) throw new Error('Método de pago no encontrado');
+
+    const deleted = this.metodosPago.splice(index, 1)[0];
+    return deleted;
   }
 
 }

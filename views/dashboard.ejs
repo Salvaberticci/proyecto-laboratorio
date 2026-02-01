@@ -215,6 +215,75 @@
                                 </div>
                             </div>
 
+                            <!-- Citas (Pruebas) -->
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <div class="experiments-icon"> <!-- Reusing existing class or add new one -->
+                                            <i class="fas fa-calendar-alt card-icon" style="color: #6f42c1;"></i>
+                                        </div>
+                                        <h5 class="card-title">Citas</h5>
+                                        <p class="card-text text-muted">Programación de pruebas de laboratorio</p>
+                                        <a href="/citas" class="btn btn-primary"
+                                            style="background-color: #6f42c1; border-color: #6f42c1;">
+                                            <i class="fas fa-calendar-day me-1"></i>Ver Citas
+                                        </a>
+                                        <% if (user.role==='admin' || user.role==='user' ) { %>
+                                            <a href="/citas/crear" class="btn btn-outline-primary ms-1"
+                                                style="color: #6f42c1; border-color: #6f42c1;">
+                                                <i class="fas fa-plus me-1"></i>Agendar
+                                            </a>
+                                            <% } %>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Áreas (Salas) -->
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <div class="experiments-icon">
+                                            <i class="fas fa-door-open card-icon" style="color: #e83e8c;"></i>
+                                        </div>
+                                        <h5 class="card-title">Áreas</h5>
+                                        <p class="card-text text-muted">Gestión de espacios físicos</p>
+                                        <a href="/areas" class="btn btn-primary"
+                                            style="background-color: #e83e8c; border-color: #e83e8c;">
+                                            <i class="fas fa-eye me-1"></i>Ver
+                                        </a>
+                                        <% if (user.role==='admin' ) { %>
+                                            <a href="/areas/crear" class="btn btn-outline-primary ms-1"
+                                                style="color: #e83e8c; border-color: #e83e8c;">
+                                                <i class="fas fa-plus"></i>
+                                            </a>
+                                            <% } %>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Métodos de Pago -->
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <div class="experiments-icon">
+                                            <i class="fas fa-credit-card card-icon" style="color: #fd7e14;"></i>
+                                        </div>
+                                        <h5 class="card-title">Pagos</h5>
+                                        <p class="card-text text-muted">Configurar métodos de pago</p>
+                                        <a href="/metodospago" class="btn btn-primary"
+                                            style="background-color: #fd7e14; border-color: #fd7e14;">
+                                            <i class="fas fa-eye me-1"></i>Ver
+                                        </a>
+                                        <% if (user.role==='admin' ) { %>
+                                            <a href="/metodospago/crear" class="btn btn-outline-primary ms-1"
+                                                style="color: #fd7e14; border-color: #fd7e14;">
+                                                <i class="fas fa-plus"></i>
+                                            </a>
+                                            <% } %>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Usuarios (solo admin) -->
                             <% if (user.role==='admin' ) { %>
                                 <div class="col-md-6 col-lg-3 mb-4">

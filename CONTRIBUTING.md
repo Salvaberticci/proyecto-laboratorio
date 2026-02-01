@@ -1,6 +1,6 @@
-# Contributing to Cine Glorimar
+# Contributing to Laboratorio Clínico Glorimar
 
-Thank you for your interest in contributing to the Cine Glorimar project! We welcome contributions from the community.
+Thank you for your interest in contributing to the Laboratorio Clínico Glorimar project! We welcome contributions from the community.
 
 ## 📋 Table of Contents
 

@@ -1,6 +1,6 @@
 # Database Schema Documentation
 
-This document provides comprehensive documentation of the Cine Glorimar database schema, including table structures, relationships, indexes, and data constraints.
+This document provides comprehensive documentation of the Laboratorio Clínico Glorimar database schema, including table structures, relationships, indexes, and data constraints.
 
 ## Table of Contents
 
@@ -29,9 +29,9 @@ The Cine Glorimar database uses MariaDB/MySQL and follows a normalized relationa
 
 ## Core Tables
 
-### 1. peliculas (Movies)
+### 1. peliculas (Experiments/Exams)
 
-**Purpose:** Stores information about movies available in the cinema.
+**Purpose:** Stores information about medical experiments/exams.
 
 ```sql
 CREATE TABLE `peliculas` (

@@ -266,6 +266,21 @@ class MetodosPagoController {
       }
     }
   }
+  // DELETE /metodospago/:id - Elimina un método de pago desde vista web
+  async eliminar(req, res) {
+    try {
+      const { id } = req.params;
+      await dbService.deleteMetodoPago(id);
+
+      res.redirect('/metodospago?success=Método de pago eliminado exitosamente');
+    } catch (error) {
+      console.error('Error en eliminar método de pago:', error);
+      if (error.message.includes('no encontrado')) {
+        return res.redirect('/metodospago?error=Método de pago no encontrado');
+      }
+      res.redirect('/metodospago?error=Error al eliminar el método de pago');
+    }
+  }
 }
 
 module.exports = new MetodosPagoController();

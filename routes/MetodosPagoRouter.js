@@ -39,4 +39,7 @@ router.get('/metodospago/:id/editar', requireWebAuth, requireWebRole('user'), me
 // POST /metodospago/:id/editar - Procesa edición de método de pago desde formulario (requiere user o admin)
 router.post('/metodospago/:id/editar', requireWebAuth, requireWebRole('user'), metodosPagoController.editar);
 
+// DELETE /metodospago/:id - Elimina un método de pago (requiere admin)
+router.delete('/metodospago/:id', requireWebAuth, requireWebRole('admin'), metodosPagoController.eliminar);
+
 module.exports = router;
